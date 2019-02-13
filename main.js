@@ -8,7 +8,7 @@ let createWindow = () => {
     win.on("close", () => {
         win = null;
     });
-    win.loadURL("http://www.google.com/");
+    win.loadURL(`file://${__dirname}/index.html`);
 };
 
 app.on("ready", createWindow);
