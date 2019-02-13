@@ -1,0 +1,52 @@
+.flxp, .flxp-rcc {
+    display: flex; 
+    flex-direction: row; 
+    justify-content: center; 
+    align-items: center; 
+    flex-wrap: nowrap; 
+}
+.flxp-rcs {
+    display: flex; 
+    flex-direction: row;
+    justify-content: center; 
+    align-items: stretch;
+    flex-wrap: nowrap; 
+}
+.flxp-rss {
+    display: flex; 
+    flex-direction: row;
+    justify-content: stretch; 
+    align-items: stretch;
+    flex-wrap: nowrap; 
+}
+.flxp-ccc {
+    display: flex; 
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    flex-wrap: nowrap; 
+}
+.flxp-ccs {
+    display: flex; 
+    flex-direction: column;
+    justify-content: center; 
+    align-items: stretch;
+    flex-wrap: nowrap; 
+}
+.flxp-css {
+    display: flex; 
+    flex-direction: column;
+    justify-content: stretch; 
+    align-items: stretch;
+    flex-wrap: nowrap; 
+}
+
+.flxc, .flxc-1 {
+    flex: 1; 
+}
+.flxc-2 {
+    flex: 2; 
+}
+.flxc-3 {
+    flex: 3; 
+}
