@@ -1,6 +1,6 @@
-const common = {};
+let common = {};
 
-const json = {};
+let json = {};
 json.parse = function (string, init = {}) {
     try {
         return JSON.parse(string);
@@ -10,7 +10,7 @@ json.parse = function (string, init = {}) {
 };
 common.json = json;
 
-const http = {};
+let http = {};
 http.post = function (url, content, listener) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = listener;

@@ -2,9 +2,11 @@ const { app, BrowserWindow } = require("electron");
 
 let createWindow = () => {
     win = new BrowserWindow({
-        width: 800,
-        height: 600
+        webPreferences: {
+            webSecurity: false
+        }
     });
+    win.maximize();
     win.on("close", () => {
         win = null;
     });
