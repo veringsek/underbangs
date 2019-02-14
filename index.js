@@ -35,6 +35,7 @@ let hostgame = (port = PORT_SERVER) => {
         ip: IP.address(),
         port: port,
         host: me.ip,
+        players: [],
         stage: "wait"
     };
     server = serve(game.port, {
@@ -50,7 +51,7 @@ let join = (ip, port = PORT_SERVER) => {
     post(ip, port, { action: "join" }, function () {
         if (common.http.ready(this)) {
             let response = common.json.parse(this.responseText, {});
-            log(response);
+            lobby.players = response.players;
         }
     });
 };
@@ -66,6 +67,15 @@ let me = {
     name: "unknown-player"
 };
 let client = serve(me.port, (req, res) => {
-    res.send(`im player ${me.name}`);
+    // res.send(`im player ${me.name}`);
+    let request = common.json.parse(req.body, { action: "" });
+    switch (request.action) {
+        case "update": {
+            for (let key in request.data) {
+                lobby[key] = request.data[key];
+            }
+            break;
+        }
+    }
 });
 let lobby = {}; // info about the game we joined
