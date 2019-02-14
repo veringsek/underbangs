@@ -11,6 +11,9 @@ json.parse = function (string, init = {}) {
 common.json = json;
 
 let http = {};
+http.ready = function (response) {
+    return response.readyState === 4 && response.status === 200;
+};
 http.post = function (url, content, listener) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = listener;

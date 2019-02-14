@@ -4,6 +4,7 @@ let log = console.log;
 // Node Dependencies
 const IP = require("ip");
 const express = require("express");
+const bodyParser = require("body-parser");
 
 // Imports
 const { common } = require("./common.js");
@@ -14,28 +15,20 @@ const PORT_CLIENT = 9488;
 
 // Methods
 let post = (ip, port, content, listener) => {
-    log(`http://${ip}:${port}`);
-    return common.http.post(`http://${ip}:${port}`, content, listener);
+    return common.http.post(`http://${ip}:${port}`, JSON.stringify(content), listener);
 };
 let serve = function (port, listens) {
-    handler = express();
+    let server = express();
+    server.use(bodyParser.text());
+    server.use(bodyParser.urlencoded({ extended: true }));
     if (typeof listens === "function") {
         listens = { "/": listens };
     }
     for (let route in listens) {
-        handler.all(route, listens[route]);
+        server.all(route, listens[route]);
     }
-    handler.listen(port);
-    return handler;
-};
-let join = (ip, port = PORT_SERVER) => {
-    post(ip, port, "ggg", function () {
-        log(this.status);
-        log(this.responseText);
-    })
-
-    lobby.ip = ip;
-    lobby.port = port;
+    server.listen(port);
+    return server;
 };
 let hostgame = (port = PORT_SERVER) => {
     game = {
@@ -46,12 +39,24 @@ let hostgame = (port = PORT_SERVER) => {
     };
     server = serve(game.port, {
         "/": (req, res) => {
-            console.log(req);
-            res.send(`kkk`);
+            log(req);
+            res.send(game.stage);
         }
     });
 
     join(game.ip, game.port);
+};
+let join = (ip, port = PORT_SERVER) => {
+    post(ip, port, { action: "join" }, function () {
+        if (common.http.ready(this)) {
+            let response = common.json.parse(this.responseText, {});
+            log(response);
+        }
+    });
+};
+let ingame = (ip, port) => {
+    lobby.ip = ip;
+    lobby.port = port;
 };
 
 // Variables
