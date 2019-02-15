@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 
 // Imports
 const { common } = require("./common.js");
+const { GameServer } = require("./gameserver.js");
 
 // Constants
 const PORT_SERVER = 9487;
@@ -31,19 +32,20 @@ let serve = function (port, listens) {
     return server;
 };
 let hostgame = (port = PORT_SERVER) => {
-    game = {
-        ip: IP.address(),
-        port: port,
-        host: me.ip,
-        players: [],
-        stage: "wait"
-    };
-    server = serve(game.port, {
-        "/": (req, res) => {
-            log(req);
-            res.send(game.stage);
-        }
-    });
+    gameserver = new GameServer(IP.address(), port, me.ip);
+    // game = {
+    //     ip: IP.address(),
+    //     port: port,
+    //     host: me.ip,
+    //     players: [],
+    //     stage: "wait"
+    // };
+    // server = serve(game.port, {
+    //     "/": (req, res) => {
+    //         log(req);
+    //         res.send(game.stage);
+    //     }
+    // });
 
     join(game.ip, game.port);
 };
