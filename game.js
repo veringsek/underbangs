@@ -34,7 +34,10 @@ let GameServer = function (ip, port, host) {
         let request = common.json.parse(req.body, { action: "" });
         switch (request.action) {
             case "join": {
-                let success = this.addPlayer(new Player(IPv4(req.ip), request.port));
+                // let success = this.addPlayer(new Player(IPv4(req.ip), request.port));
+                let success = this.addPlayer({
+                    url: `http://${IPv4(req.ip)}:${request.port}`
+                });
                 if (!success) {
                     respond({ result: "rejected" });
                     break;
@@ -48,9 +51,10 @@ let GameServer = function (ip, port, host) {
     this.server = server;
 };
 GameServer.prototype.addPlayer = function (player) {
-    if (!(player instanceof Player)) return false;
+    // if (!(player instanceof Player)) return false;
     for (let any of this.players) {
-        if (player.equals(any)) {
+        // if (player.equals(any)) {
+        if (player.url === any.url) {
             return false;
         }
     }
@@ -60,7 +64,9 @@ GameServer.prototype.addPlayer = function (player) {
 };
 GameServer.prototype.updatePlayers = function () {
     for (let player of this.players) {
-        player.send({ action: "update", data: { players: this.players } });
+        let content = { action: "update", data: { players: this.players } };
+        // player.send({ action: "update", data: { players: this.players } });
+        common.http.post(player.url, JSON.stringify(content));
     }
 };
 exports.GameServer = GameServer;
@@ -85,11 +91,8 @@ let GameClient = function (ip, port) {
                 for (let datum in data) {
                     switch (datum) {
                         case "players": {
-                            this.game.players = data.players.map(p => Player.from(p));
-                            // this.game.players = [];
-                            // for (let player of request.data.players) {
-                            //     this.game.players.push(new Player(player.ip, player.port));
-                            // }
+                            // this.game.players = data.players.map(p => Player.from(p));
+                            this.game.players = data.players;
                             break;
                         }
                     }
@@ -114,26 +117,22 @@ GameClient.prototype.join = function (ip, port) {
 };
 exports.GameClient = GameClient;
 
-let Player = function (ip, port = "80") {
-    // this.ip = ip;
-    // this.port = port;
-    // this.url = `http://${this.ip}:${this.port}`;
-    this.url = `http://${ip}:${port}`;
-};
-Player.from = function (object) {
-    let player = new Player();
-    player.url = object.url;
-    player.name = object.name;
-    return player;
-};
-Player.prototype.equals = function (player) {
-    if (!(player instanceof Player)) {
-        return false;
-    }
-    return this.url === player.url;
-    // return this.ip === player.ip && this.port === player.port;
-};
-Player.prototype.send = function (content, listener) {
-    common.http.post(this.url, JSON.stringify(content), listener);
-};
-exports.Player = Player;
+// let Player = function (ip, port = "80") {
+//     this.url = `http://${ip}:${port}`;
+// };
+// Player.from = function (object) {
+//     let player = new Player();
+//     player.url = object.url;
+//     player.name = object.name;
+//     return player;
+// };
+// Player.prototype.equals = function (player) {
+//     if (!(player instanceof Player)) {
+//         return false;
+//     }
+//     return this.url === player.url;
+// };
+// Player.prototype.send = function (content, listener) {
+//     common.http.post(this.url, JSON.stringify(content), listener);
+// };
+// exports.Player = Player;
