@@ -15,34 +15,18 @@ const PORT_SERVER = 9487;
 const PORT_CLIENT = 9488;
 
 // Methods
-// let post = (ip, port, content, listener) => {
-//     return common.http.post(`http://${ip}:${port}`, JSON.stringify(content), listener);
-// };
-// let serve = function (port, listens) {
-//     let server = express();
-//     server.use(bodyParser.text());
-//     server.use(bodyParser.urlencoded({ extended: true }));
-//     if (typeof listens === "function") {
-//         listens = { "/": listens };
-//     }
-//     for (let route in listens) {
-//         server.all(route, listens[route]);
-//     }
-//     server.listen(port);
-//     return server;
-// };
+let init = function () {
+    vm = new Vue({
+        el: "#ribody", 
+        data: {
+            client: gameclient
+        }
+    });
+};
 let hostgame = (port = PORT_SERVER) => {
     gameserver = new GameServer(IP.address(), port, gameclient.ip);
     gameclient.join(gameserver.ip, gameserver.port);
 };
-// let join = (ip, port = PORT_SERVER) => {
-//     post(ip, port, { action: "join" }, function () {
-//         if (common.http.ready(this)) {
-//             let response = common.json.parse(this.responseText, {});
-//             lobby.players = response.players;
-//         }
-//     });
-// };
 let ingame = (ip, port) => {
     lobby.ip = ip;
     lobby.port = port;

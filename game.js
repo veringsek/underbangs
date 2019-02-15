@@ -69,6 +69,7 @@ let GameClient = function (ip, port) {
     this.ip = ip;
     this.port = port;
     this.name = "Jack";
+    this.players = [];
 
     let client = express();
     client.use(bodyParser.text());
