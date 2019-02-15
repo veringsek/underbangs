@@ -19,7 +19,6 @@ let IPv4 = function (ip) {
 };
 
 let GameServer = function (ip, port, host) {
-    // this.game = { ip, port, host, players: [], stage: "wait" };
     this.ip = ip;
     this.port = port;
     this.host = host;
@@ -34,7 +33,6 @@ let GameServer = function (ip, port, host) {
         let request = common.json.parse(req.body, { action: "" });
         switch (request.action) {
             case "join": {
-                // let success = this.addPlayer(new Player(IPv4(req.ip), request.port));
                 let success = this.addPlayer({
                     url: `http://${IPv4(req.ip)}:${request.port}`
                 });
@@ -51,9 +49,7 @@ let GameServer = function (ip, port, host) {
     this.server = server;
 };
 GameServer.prototype.addPlayer = function (player) {
-    // if (!(player instanceof Player)) return false;
     for (let any of this.players) {
-        // if (player.equals(any)) {
         if (player.url === any.url) {
             return false;
         }
@@ -65,7 +61,6 @@ GameServer.prototype.addPlayer = function (player) {
 GameServer.prototype.updatePlayers = function () {
     for (let player of this.players) {
         let content = { action: "update", data: { players: this.players } };
-        // player.send({ action: "update", data: { players: this.players } });
         common.http.post(player.url, JSON.stringify(content));
     }
 };
@@ -91,7 +86,6 @@ let GameClient = function (ip, port) {
                 for (let datum in data) {
                     switch (datum) {
                         case "players": {
-                            // this.game.players = data.players.map(p => Player.from(p));
                             this.game.players = data.players;
                             break;
                         }
@@ -116,23 +110,3 @@ GameClient.prototype.join = function (ip, port) {
     });
 };
 exports.GameClient = GameClient;
-
-// let Player = function (ip, port = "80") {
-//     this.url = `http://${ip}:${port}`;
-// };
-// Player.from = function (object) {
-//     let player = new Player();
-//     player.url = object.url;
-//     player.name = object.name;
-//     return player;
-// };
-// Player.prototype.equals = function (player) {
-//     if (!(player instanceof Player)) {
-//         return false;
-//     }
-//     return this.url === player.url;
-// };
-// Player.prototype.send = function (content, listener) {
-//     common.http.post(this.url, JSON.stringify(content), listener);
-// };
-// exports.Player = Player;
