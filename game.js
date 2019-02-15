@@ -69,7 +69,9 @@ let GameClient = function (ip, port) {
     this.ip = ip;
     this.port = port;
     this.name = "Jack";
-    this.players = [];
+    this.game = {
+        players: []
+    };
 
     let client = express();
     client.use(bodyParser.text());
@@ -82,9 +84,9 @@ let GameClient = function (ip, port) {
                 for (let datum in request.data) {
                     switch (datum) {
                         case "players": {
-                            this.players = [];
+                            this.game.players = [];
                             for (let player of request.data.players) {
-                                this.players.push(new Player(player.ip, player.port));
+                                this.game.players.push(new Player(player.ip, player.port));
                             }
                             break;
                         }

@@ -16,7 +16,7 @@
             <a id="btnHost" onclick="hostgame()">Host</a>
         </div>
         <div id="divYard" class="div-full focus flxc">
-            <span v-for="player in client.players">
+            <span v-for="player in client.game.players">
                 {{player.name}} : {{player.url}}
             </span>
         </div>
