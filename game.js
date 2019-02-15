@@ -81,13 +81,15 @@ let GameClient = function (ip, port) {
         let request = common.json.parse(req.body, { action: "" });
         switch (request.action) {
             case "update": {
-                for (let datum in request.data) {
+                let data = request.data;
+                for (let datum in data) {
                     switch (datum) {
                         case "players": {
-                            this.game.players = [];
-                            for (let player of request.data.players) {
-                                this.game.players.push(new Player(player.ip, player.port));
-                            }
+                            this.game.players = data.players.map(p => Player.from(p));
+                            // this.game.players = [];
+                            // for (let player of request.data.players) {
+                            //     this.game.players.push(new Player(player.ip, player.port));
+                            // }
                             break;
                         }
                     }
@@ -113,15 +115,23 @@ GameClient.prototype.join = function (ip, port) {
 exports.GameClient = GameClient;
 
 let Player = function (ip, port = "80") {
-    this.ip = ip;
-    this.port = port;
-    this.url = `http://${this.ip}:${this.port}`;
+    // this.ip = ip;
+    // this.port = port;
+    // this.url = `http://${this.ip}:${this.port}`;
+    this.url = `http://${ip}:${port}`;
+};
+Player.from = function (object) {
+    let player = new Player();
+    player.url = object.url;
+    player.name = object.name;
+    return player;
 };
 Player.prototype.equals = function (player) {
     if (!(player instanceof Player)) {
         return false;
     }
-    return this.ip === player.ip && this.port === player.port;
+    return this.url === player.url;
+    // return this.ip === player.ip && this.port === player.port;
 };
 Player.prototype.send = function (content, listener) {
     common.http.post(this.url, JSON.stringify(content), listener);
