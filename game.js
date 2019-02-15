@@ -1,7 +1,22 @@
+// debug
+let log = console.log;
+
 const express = require("express");
 const bodyParser = require("body-parser");
 
 const { common } = require("./common.js");
+
+// JSON.from = function (text, init = {}, reviver) {
+//     try {
+//         return JSON.parse(text, reviver);
+//     } catch (ex) {
+//         return init;
+//     }
+// };
+
+let IPv4 = function (ip) {
+    return ip.replace(/^(.+:)?(\d{1,3}(\.\d{1,3}){3})$/, "$2");
+};
 
 let GameServer = function (ip, port, host) {
     // this.game = { ip, port, host, players: [], stage: "wait" };
@@ -15,15 +30,17 @@ let GameServer = function (ip, port, host) {
     server.use(bodyParser.text());
     server.use(bodyParser.urlencoded({ extended: true }));
     server.all("/", (req, res) => {
-        let respond = (content) => res.send(JSON.stringify(content));
+        let respond = content => res.send(JSON.stringify(content));
         let request = common.json.parse(req.body, { action: "" });
         switch (request.action) {
             case "join": {
-                let success = this.addPlayer(new Player(req.ip, request.port));
+                log(req.ip);
+                let success = this.addPlayer(new Player(IPv4(req.ip), request.port));
                 if (!success) {
                     respond({ result: "rejected" });
                     break;
                 }
+                respond({ result: "joined" });
                 break;
             }
         }
@@ -48,6 +65,39 @@ GameServer.prototype.updatePlayers = function () {
     }
 };
 exports.GameServer = GameServer;
+
+let GameClient = function (ip, port) {
+    this.ip = ip;
+    this.port = port;
+    this.name = "Jack";
+
+    let client = express();
+    client.use(bodyParser.text());
+    client.use(bodyParser.urlencoded({ extended: true }));
+    client.all("/", (req, res) => {
+        let respond = content => res.send(JSON.stringify(content));
+        let request = common.json.parse(req.body, { action: "" });
+        switch (request.action) {
+            case "update":
+                console.log(request.data);
+                break;
+        }
+    });
+    client.listen(port);
+    this.client = client;
+};
+GameClient.prototype.join = function (ip, port) {
+    let content = { action: "join", port: this.port };
+    common.http.post(`http://${ip}:${port}`, content, function () {
+        if (common.http.ready(this)) {
+            let response = common.json.parse(this.responseText, {});
+            if (response.result === "rejected") {
+                //
+            }
+        }
+    });
+};
+exports.GameClient = GameClient;
 
 let Player = function (ip, port = "80") {
     this.ip = ip;

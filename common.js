@@ -15,6 +15,9 @@ http.ready = function (response) {
     return response.readyState === 4 && response.status === 200;
 };
 http.post = function (url, content, listener) {
+    if (typeof content === "object") {
+        content = JSON.stringify(content);
+    }
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = listener;
     xhttp.open("POST", url, true);

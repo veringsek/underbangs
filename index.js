@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 
 // Imports
 const { common } = require("./common.js");
-const { GameServer } = require("./gameserver.js");
+const { GameServer, GameClient } = require("./game.js");
 
 // Constants
 const PORT_SERVER = 9487;
@@ -32,7 +32,7 @@ let serve = function (port, listens) {
     return server;
 };
 let hostgame = (port = PORT_SERVER) => {
-    gameserver = new GameServer(IP.address(), port, me.ip);
+    gameserver = new GameServer(IP.address(), port, gameclient.ip);
     // game = {
     //     ip: IP.address(),
     //     port: port,
@@ -47,7 +47,8 @@ let hostgame = (port = PORT_SERVER) => {
     //     }
     // });
 
-    join(game.ip, game.port);
+    gameclient.join(gameserver.ip, gameserver.port);
+    // join(game.ip, game.port);
 };
 let join = (ip, port = PORT_SERVER) => {
     post(ip, port, { action: "join" }, function () {
@@ -63,21 +64,25 @@ let ingame = (ip, port) => {
 };
 
 // Variables
-let me = {
-    ip: IP.address(),
-    port: PORT_CLIENT,
-    name: "unknown-player"
-};
-let client = serve(me.port, (req, res) => {
-    // res.send(`im player ${me.name}`);
-    let request = common.json.parse(req.body, { action: "" });
-    switch (request.action) {
-        case "update": {
-            for (let key in request.data) {
-                lobby[key] = request.data[key];
-            }
-            break;
-        }
-    }
-});
-let lobby = {}; // info about the game we joined
+let gameclient = new GameClient(IP.address(), PORT_CLIENT);
+// let me = {
+//     ip: IP.address(),
+//     port: PORT_CLIENT,
+//     name: "unknown-player"
+// };
+// let client = serve(me.port, (req, res) => {
+//     // res.send(`im player ${me.name}`);
+//     let request = common.json.parse(req.body, { action: "" });
+//     switch (request.action) {
+//         case "update": {
+//             for (let key in request.data) {
+//                 lobby[key] = request.data[key];
+//             }
+//             break;
+//         }
+//     }
+// });
+// let lobby = {}; // info about the game we joined
+
+// debug
+hostgame();
