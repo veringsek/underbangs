@@ -34,7 +34,6 @@ let GameServer = function (ip, port, host) {
         let request = common.json.parse(req.body, { action: "" });
         switch (request.action) {
             case "join": {
-                log(req.ip);
                 let success = this.addPlayer(new Player(IPv4(req.ip), request.port));
                 if (!success) {
                     respond({ result: "rejected" });
@@ -78,9 +77,20 @@ let GameClient = function (ip, port) {
         let respond = content => res.send(JSON.stringify(content));
         let request = common.json.parse(req.body, { action: "" });
         switch (request.action) {
-            case "update":
-                console.log(request.data);
+            case "update": {
+                for (let datum in request.data) {
+                    switch (datum) {
+                        case "players": {
+                            this.players = [];
+                            for (let player of request.data.players) {
+                                this.players.push(new Player(player.ip, player.port));
+                            }
+                            break;
+                        }
+                    }
+                }
                 break;
+            }
         }
     });
     client.listen(port);
