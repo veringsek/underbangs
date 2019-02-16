@@ -24,8 +24,8 @@ let init = function () {
     });
 };
 let hostgame = (port = PORT_SERVER) => {
-    gameserver = new GameServer(IP.address(), port, gameclient.ip);
-    gameclient.join(gameserver.ip, gameserver.port);
+    gameserver = new GameServer(port, gameclient.ip);
+    gameclient.join(gameserver.url);
 };
 let ingame = (ip, port) => {
     lobby.ip = ip;

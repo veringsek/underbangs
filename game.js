@@ -1,6 +1,7 @@
 // debug
 let log = console.log;
 
+const IP = require("ip");
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -17,10 +18,13 @@ const { common } = require("./common.js");
 let IPv4 = function (ip) {
     return ip.replace(/^(.+:)?(\d{1,3}(\.\d{1,3}){3})$/, "$2");
 };
+let IPPort = function (ip, port) {
+    return `http://${ip}:${port}`;
+};
 
-let GameServer = function (ip, port, host) {
-    this.ip = ip;
+let GameServer = function (port, host) {
     this.port = port;
+    this.url = IPPort(IP.address(), this.port);
     this.host = host;
     this.players = [];
     this.stage = "wait";
@@ -98,9 +102,9 @@ let GameClient = function (ip, port) {
     client.listen(port);
     this.client = client;
 };
-GameClient.prototype.join = function (ip, port) {
+GameClient.prototype.join = function (url) {
     let content = { action: "join", port: this.port };
-    common.http.post(`http://${ip}:${port}`, content, function () {
+    common.http.post(url, content, function () {
         if (common.http.ready(this)) {
             let response = common.json.parse(this.responseText, {});
             if (response.result === "rejected") {
