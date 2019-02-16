@@ -24,16 +24,12 @@ let init = function () {
     });
 };
 let hostgame = (port = PORT_SERVER) => {
-    gameserver = new GameServer(port, gameclient.ip);
+    gameserver = new GameServer(port, gameclient.url);
     gameclient.join(gameserver.url);
-};
-let ingame = (ip, port) => {
-    lobby.ip = ip;
-    lobby.port = port;
 };
 
 // Variables
-let gameclient = new GameClient(IP.address(), PORT_CLIENT);
+let gameclient = new GameClient(PORT_CLIENT);
 
 // debug
 hostgame();

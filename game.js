@@ -7,17 +7,6 @@ const bodyParser = require("body-parser");
 
 const { common } = require("./common.js");
 
-// JSON.from = function (text, init = {}, reviver) {
-//     try {
-//         return JSON.parse(text, reviver);
-//     } catch (ex) {
-//         return init;
-//     }
-// };
-
-let IPv4 = function (ip) {
-    return ip.replace(/^(.+:)?(\d{1,3}(\.\d{1,3}){3})$/, "$2");
-};
 let IPPort = function (ip, port) {
     return `http://${ip}:${port}`;
 };
@@ -37,9 +26,7 @@ let GameServer = function (port, host) {
         let request = common.json.parse(req.body, { action: "" });
         switch (request.action) {
             case "join": {
-                let success = this.addPlayer({
-                    url: `http://${IPv4(req.ip)}:${request.port}`
-                });
+                let success = this.addPlayer({ url: request.url });
                 if (!success) {
                     respond({ result: "rejected" });
                     break;
@@ -70,9 +57,8 @@ GameServer.prototype.updatePlayers = function () {
 };
 exports.GameServer = GameServer;
 
-let GameClient = function (ip, port) {
-    this.ip = ip;
-    this.port = port;
+let GameClient = function (port) {
+    this.url = IPPort(IP.address(), port);
     this.name = "Jack";
     this.game = {
         players: []
@@ -103,7 +89,7 @@ let GameClient = function (ip, port) {
     this.client = client;
 };
 GameClient.prototype.join = function (url) {
-    let content = { action: "join", port: this.port };
+    let content = { action: "join", url: this.url };
     common.http.post(url, content, function () {
         if (common.http.ready(this)) {
             let response = common.json.parse(this.responseText, {});
