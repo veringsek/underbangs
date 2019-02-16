@@ -26,12 +26,13 @@ let GameServer = function (port, host) {
         let request = common.json.parse(req.body, { action: "" });
         switch (request.action) {
             case "join": {
-                let success = this.addPlayer({ url: request.url });
-                if (!success) {
-                    respond({ result: "rejected" });
-                    break;
-                }
-                respond({ result: "joined" });
+                respond(this.serveJoin(request));
+                // let success = this.addPlayer({ url: request.url });
+                // if (!success) {
+                //     respond({ result: "rejected" });
+                //     break;
+                // }
+                // respond({ result: "joined" });
                 break;
             }
         }
@@ -45,6 +46,7 @@ GameServer.prototype.addPlayer = function (player) {
             return false;
         }
     }
+    player.number = this.players.length;
     this.players.push(player);
     this.updatePlayers();
     return true;
@@ -54,6 +56,16 @@ GameServer.prototype.updatePlayers = function () {
         let content = { action: "update", data: { players: this.players } };
         common.http.post(player.url, JSON.stringify(content));
     }
+};
+GameServer.prototype.serveJoin = function (request) {
+    let success = this.addPlayer({ url: request.url });
+    if (!success) {
+        return { result: "rejected" };
+    }
+    return {
+        result: "joined",
+        url: this.url
+    };
 };
 exports.GameServer = GameServer;
 
@@ -90,11 +102,14 @@ let GameClient = function (port) {
 };
 GameClient.prototype.join = function (url) {
     let content = { action: "join", url: this.url };
+    let client = this;
     common.http.post(url, content, function () {
         if (common.http.ready(this)) {
             let response = common.json.parse(this.responseText, {});
             if (response.result === "rejected") {
                 //
+            } else if (response.result === "joined") {
+                client.game.url = response.url;
             }
         }
     });
