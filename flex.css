@@ -19,6 +19,13 @@
     align-items: stretch;
     flex-wrap: nowrap; 
 }
+.flxp-rsc {
+    display: flex; 
+    flex-direction: row;
+    justify-content: stretch; 
+    align-items: center;
+    flex-wrap: nowrap; 
+}
 .flxp-ccc {
     display: flex; 
     flex-direction: column;

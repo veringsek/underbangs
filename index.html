@@ -30,8 +30,20 @@
             </div>
         </div>
         <div id="divPlayers" class="flxc">
-            <div v-for="player in client.game.players">
-                {{player.number}} : {{player.name}}
+            <div v-for="player in client.game.players" class="player flxp-rcs">
+                <span class="player__img"></span>
+                <div class="flxc flxp-ccs">
+                    <div class="flxp-rsc">
+                        <span class="player__number bandaid"
+                            :title="`Player No.${player.number}`"
+                            >#{{player.number}}</span>
+                        <span class="player__name flxc">{{player.name}}</span>
+                        <span class="player__link bandaid">Link</span>
+                    </div>
+                    <textarea class="flxc txt player__note" 
+                        :readonly="player.url !== client.me.url"
+                        >You can take some note here. </textarea>
+                </div>
             </div>
         </div>
     </div>
