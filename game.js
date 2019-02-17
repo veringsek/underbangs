@@ -22,13 +22,12 @@ let GameServer = function (port, host) {
     server.use(bodyParser.urlencoded({ extended: true }));
     server.post("/join/", (req, res) => {
         let respond = content => res.send(JSON.stringify(content));
-        let request = common.json.parse(req.body, { action: "" });
-        log("kkk");
+        let request = common.json.parse(req.body, {});
         respond(this.serveJoin(request));
     });
     server.all("/", (req, res) => {
         let respond = content => res.send(JSON.stringify(content));
-        let request = common.json.parse(req.body, { action: "" });
+        let request = common.json.parse(req.body, {});
         // let ip = new IPAdress.Address6(req.ip).to4().address;
         // log(ip);
         // respond(this.serve(request));
@@ -49,8 +48,8 @@ GameServer.prototype.addPlayer = function (player) {
 };
 GameServer.prototype.updatePlayers = function () {
     for (let player of this.players) {
-        let content = { action: "update", data: { players: this.players } };
-        HTTP.post(HTTP.url(player.url, "update"), content);
+        let content = { players: this.players };
+        HTTP.post(HTTP.url(player.url, "update", { target: "players" }), content);
     }
 };
 GameServer.prototype.serveJoin = function (request) {
@@ -82,34 +81,18 @@ let GameClient = function (port, name = "Noname") {
     client.use(bodyParser.urlencoded({ extended: true }));
     client.post("/update", (req, res) => {
         let respond = content => res.send(JSON.stringify(content));
-        let request = common.json.parse(req.body, { action: "" });
-        let data = request.data;
-        for (let datum in data) {
-            switch (datum) {
-                case "players": {
-                    this.game.players = data.players;
-                    break; 
-                }
+        let request = common.json.parse(req.body, {});
+        let target = req.query.target;
+        switch (target) {
+            case "players": {
+                this.game.players = request.players;
+                break;
             }
         }
     });
     client.all("/", (req, res) => {
         let respond = content => res.send(JSON.stringify(content));
-        let request = common.json.parse(req.body, { action: "" });
-        switch (request.action) {
-            case "update": {
-                let data = request.data;
-                for (let datum in data) {
-                    switch (datum) {
-                        case "players": {
-                            this.game.players = data.players;
-                            break;
-                        }
-                    }
-                }
-                break;
-            }
-        }
+        let request = common.json.parse(req.body, {});
     });
     client.listen(port);
     this.client = client;
@@ -133,7 +116,7 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
     });
 };
 GameClient.prototype.updateNote = function (note) {
-    let content = { action: "update", data: { note } };
+    let content = { data: { note } };
     for (let player of this.game.players) {
         if (player.url === this.me.url) continue;
         HTTP.post(player.url, content);
