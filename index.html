@@ -10,19 +10,21 @@
 
 <body onload="init()">
     <div id="ribody" class="flxp-rcs">
-        <div id="divGameRound" class="flxp-ccs section">
-            <div id="divClientPort" class="flxp-ccs">
+        <div id="divLoadingStage" class="flxp-ccs section">
+            <div id="divClientPort" class="flxp-ccs loading-stage"
+                :class="{ focus: loadingStage === 'spawn-client' }">
                 <input type="text" id="txtClientPort" class="txt txt-center"
                     value="9488" />
                 <span id="btnSpawn" class="btn flxc" 
                     onclick="spawnclient(txtClientPort.value)">
                     Spawn</span>
             </div>
-            <div id="divWelcome" class="flxp-ccs">
+            <div id="divWelcome" class="flxp-ccs loading-stage"
+                :class="{ focus: loadingStage === 'join-game' }">
                 <input type="text" id="txtJoinURL" class="txt txt-center"
                     value="http://127.0.0.1:9487" />
                 <span id="btnJoin" class="btn flxc" 
-                    onclick="vm.client.join(txtJoinURL.value)">
+                    onclick="joingame(txtJoinURL.value)">
                     Join</span>
                 <span style="text-align: center">OR</span>
                 <input type="text" id="txtServerPort" class="txt txt-center" value="9487" />
@@ -30,21 +32,25 @@
                     onclick="hostgame(txtServerPort.value)">
                     Host</span>
             </div>
+            <div id="divGameRound" class="flxp-ccs loading-stage"
+                :class="{ focus: loadingStage === 'in-game' }"></div>
         </div>
-        <div v-if="client.game" id="divPlayers" class="flxc">
-            <div v-for="player in client.game.players" class="player flxp-rcs">
-                <span class="player__img"></span>
-                <div class="flxc flxp-ccs">
-                    <div class="flxp-rsc">
-                        <span class="player__number bandaid"
-                            :title="`Player No.${player.number}`"
-                            >#{{player.number}}</span>
-                        <span class="player__name flxc">{{player.name}}</span>
-                        <span class="player__link bandaid">Link</span>
+        <div id="divField" class="flxc flxp-ccs">
+            <div v-if="client" id="divPlayers" class="flxc">
+                <div v-for="player in client.game.players" class="player flxp-rcs">
+                    <span class="player__img"></span>
+                    <div class="flxc flxp-ccs">
+                        <div class="flxp-rsc">
+                            <span class="player__number bandaid"
+                                :title="`Player No.${player.number}`"
+                                >#{{player.number}}</span>
+                            <span class="player__name flxc">{{player.name}}</span>
+                            <span class="player__link bandaid">Link</span>
+                        </div>
+                        <textarea class="flxc txt player__note" 
+                            :readonly="player.url !== client.me.url"
+                            >You can take some note here. </textarea>
                     </div>
-                    <textarea class="flxc txt player__note" 
-                        :readonly="player.url !== client.me.url"
-                        >You can take some note here. </textarea>
                 </div>
             </div>
         </div>

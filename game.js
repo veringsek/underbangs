@@ -66,7 +66,7 @@ exports.GameServer = GameServer;
 
 let GameClient = function (port) {
     this.me = {
-        url: IPPort(IP.address(), port), 
+        url: IPPort(IP.address(), port),
         name: "Jack"
     }
     this.game = {
@@ -97,16 +97,17 @@ let GameClient = function (port) {
     client.listen(port);
     this.client = client;
 };
-GameClient.prototype.join = function (url) {
+GameClient.prototype.join = function (url, onJoined, onRejected) {
     let content = { action: "join", player: this.me };
     let client = this;
     common.http.post(url, content, function () {
         if (common.http.ready(this)) {
             let response = common.json.parse(this.responseText, {});
             if (response.result === "rejected") {
-                //
+                onRejected();
             } else if (response.result === "joined") {
                 client.game.url = response.url;
+                onJoined();
             }
         }
     });

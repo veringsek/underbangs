@@ -1,11 +1,6 @@
 // debug
 let log = console.log;
 
-// Node Dependencies
-const IP = require("ip");
-const express = require("express");
-const bodyParser = require("body-parser");
-
 // Imports
 const { common } = require("./common.js");
 const { GameServer, GameClient } = require("./game.js");
@@ -19,15 +14,22 @@ let init = function () {
     vm = new Vue({
         el: "#ribody", 
         data: {
-            client: {}
+            loadingStage: "spawn-client", 
+            client: undefined
         }
     });
 };
 let spawnclient = (port = PORT_CLIENT) => {
     gameclient = new GameClient(port);
     vm.client = gameclient; 
+    vm.loadingStage = "join-game"; 
 };
 let hostgame = (port = PORT_SERVER) => {
     gameserver = new GameServer(port, gameclient.url);
-    gameclient.join(gameserver.url);
+    joingame(gameserver.url); 
 };
+let joingame = (url) => {
+    gameclient.join(url, () => {
+        vm.loadingStage = "in-game"; 
+    });
+}
