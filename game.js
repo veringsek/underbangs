@@ -59,7 +59,8 @@ GameServer.prototype.serveJoin = function (request) {
     }
     return {
         result: "joined",
-        url: this.url
+        url: this.url, 
+        host: this.host
     };
 };
 exports.GameServer = GameServer;
@@ -70,6 +71,7 @@ let GameClient = function (port) {
         name: "Jack"
     }
     this.game = {
+        joined: false,
         players: []
     };
 
@@ -107,6 +109,8 @@ GameClient.prototype.join = function (url, onJoined, onRejected) {
                 onRejected();
             } else if (response.result === "joined") {
                 client.game.url = response.url;
+                client.game.host = response.host;
+                client.game.joined = true;
                 onJoined();
             }
         }

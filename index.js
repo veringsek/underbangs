@@ -12,24 +12,35 @@ const PORT_CLIENT = 9488;
 // Methods
 let init = function () {
     vm = new Vue({
-        el: "#ribody", 
+        el: "#ribody",
         data: {
-            loadingStage: "spawn-client", 
+            loadingStage: "spawn-client",
             client: undefined
+        },
+        computed: {
+            spawned: function () {
+                return this.client instanceof GameClient;
+            },
+            ingame: function () {
+                return this.spawned && this.client.game.joined;
+            },
+            ishost: function () {
+                return this.ingame && this.client.game.host === this.client.me.url;
+            }
         }
     });
 };
 let spawnclient = (port = PORT_CLIENT) => {
     gameclient = new GameClient(port);
-    vm.client = gameclient; 
-    vm.loadingStage = "join-game"; 
+    vm.client = gameclient;
+    vm.loadingStage = "join-game";
 };
 let hostgame = (port = PORT_SERVER) => {
-    gameserver = new GameServer(port, gameclient.url);
-    joingame(gameserver.url); 
+    gameserver = new GameServer(port, gameclient.me.url);
+    joingame(gameserver.url);
 };
 let joingame = (url) => {
     gameclient.join(url, () => {
-        vm.loadingStage = "in-game"; 
+        vm.loadingStage = "in-game";
     });
 }

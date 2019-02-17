@@ -33,7 +33,16 @@
                     Host</span>
             </div>
             <div id="divGameRound" class="flxp-ccs loading-stage"
-                :class="{ focus: loadingStage === 'in-game' }"></div>
+                :class="{ focus: loadingStage === 'in-game' }">
+                <div v-if="ishost" id="divHostControls" class="flxp-ccs">
+                    <span id="txtHostControls" class="btn">Host Controls</span>
+                    <div class="flxp-rcc">
+                        <span id="btnGameRoundNext" class="btn">Next</span>
+                        <span id="btnGameRoundEnd" class="btn">End</span>
+                        <span id="btnGameRoundRestart" class="btn">Restart</span>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="divField" class="flxc flxp-ccs">
             <div v-if="client" id="divPlayers" class="flxc">
