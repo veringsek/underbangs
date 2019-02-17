@@ -53,7 +53,7 @@ GameServer.prototype.serve = function (request) {
     }
 };
 GameServer.prototype.serveJoin = function (request) {
-    let success = this.addPlayer({ url: request.url });
+    let success = this.addPlayer(request.player);
     if (!success) {
         return { result: "rejected" };
     }
@@ -65,8 +65,10 @@ GameServer.prototype.serveJoin = function (request) {
 exports.GameServer = GameServer;
 
 let GameClient = function (port) {
-    this.url = IPPort(IP.address(), port);
-    this.name = "Jack";
+    this.me = {
+        url: IPPort(IP.address(), port), 
+        name: "Jack"
+    }
     this.game = {
         players: []
     };
@@ -96,7 +98,7 @@ let GameClient = function (port) {
     this.client = client;
 };
 GameClient.prototype.join = function (url) {
-    let content = { action: "join", url: this.url };
+    let content = { action: "join", player: this.me };
     let client = this;
     common.http.post(url, content, function () {
         if (common.http.ready(this)) {
