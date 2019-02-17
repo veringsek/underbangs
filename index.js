@@ -19,17 +19,15 @@ let init = function () {
     vm = new Vue({
         el: "#ribody", 
         data: {
-            client: gameclient
+            client: {}
         }
     });
+};
+let spawnclient = (port = PORT_CLIENT) => {
+    gameclient = new GameClient(port);
+    vm.client = gameclient; 
 };
 let hostgame = (port = PORT_SERVER) => {
     gameserver = new GameServer(port, gameclient.url);
     gameclient.join(gameserver.url);
 };
-
-// Variables
-let gameclient = new GameClient(PORT_CLIENT);
-
-// debug
-hostgame();

@@ -10,26 +10,28 @@
 
 <body onload="init()">
     <div id="ribody" class="flxp-rcs">
-        <!-- <div id="divWelcome" class="div-full flxc">
-            <input type="text" id="txtJoinIP" />
-            <a id="btnJoin" onclick="join()">Join</a>
-            <a id="btnHost" onclick="hostgame()">Host</a>
-        </div> -->
-        <!-- <div id="divYard" class="div-full focus flxc">
-            <span v-for="player in client.game.players">
-                {{player.number}} : {{player.url}}
-            </span>
-        </div> -->
         <div id="divGameRound" class="flxp-ccs section">
+            <div id="divClientPort" class="flxp-ccs">
+                <input type="text" id="txtClientPort" class="txt txt-center"
+                    value="9488" />
+                <span id="btnSpawn" class="btn flxc" 
+                    onclick="spawnclient(txtClientPort.value)">
+                    Spawn</span>
+            </div>
             <div id="divWelcome" class="flxp-ccs">
-                <input type="text" id="txtJoinURL" class="txt txt-center" value="9488" />
-                <span id="btnJoin" class="btn flxc" onclick="join()">Join</span>
+                <input type="text" id="txtJoinURL" class="txt txt-center"
+                    value="http://127.0.0.1:9487" />
+                <span id="btnJoin" class="btn flxc" 
+                    onclick="vm.client.join(txtJoinURL.value)">
+                    Join</span>
                 <span style="text-align: center">OR</span>
                 <input type="text" id="txtServerPort" class="txt txt-center" value="9487" />
-                <span id="btnHost" class="btn flxc" onclick="hostgame()">Host</span>
+                <span id="btnHost" class="btn flxc"
+                    onclick="hostgame(txtServerPort.value)">
+                    Host</span>
             </div>
         </div>
-        <div id="divPlayers" class="flxc">
+        <div v-if="client.game" id="divPlayers" class="flxc">
             <div v-for="player in client.game.players" class="player flxp-rcs">
                 <span class="player__img"></span>
                 <div class="flxc flxp-ccs">
