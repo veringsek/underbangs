@@ -25,6 +25,24 @@ http.post = function (url, content, listener) {
     log(url);
     log(content);
 };
+http.head = function (ip, port, protocol = "http") {
+    let m = ip.includes("://") ? "" : `${protocol}://`;
+    let p = port ? `:${port}` : "";
+    return `${m}${ip}${p}`;
+};
+http.url = function (head, path, params) {
+    return `${head}${http.route(path, params)}`;
+};
+http.route = function (path = [], params) {
+    if (typeof path === "string") {
+        path = [path];
+    }
+    return `/${path.join("/")}${http.query(params)}`;
+};
+http.query = function (params) {
+    if (!params) return "";
+    return `?${Object.keys(params).map(key => `${key}=${params[key]}`).join("&")}`;
+};
 common.http = http;
 
 exports.common = common;
