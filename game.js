@@ -24,18 +24,7 @@ let GameServer = function (port, host) {
     server.all("/", (req, res) => {
         let respond = content => res.send(JSON.stringify(content));
         let request = common.json.parse(req.body, { action: "" });
-        switch (request.action) {
-            case "join": {
-                respond(this.serveJoin(request));
-                // let success = this.addPlayer({ url: request.url });
-                // if (!success) {
-                //     respond({ result: "rejected" });
-                //     break;
-                // }
-                // respond({ result: "joined" });
-                break;
-            }
-        }
+        respond(this.serve(request));
     });
     server.listen(this.port);
     this.server = server;
@@ -55,6 +44,12 @@ GameServer.prototype.updatePlayers = function () {
     for (let player of this.players) {
         let content = { action: "update", data: { players: this.players } };
         common.http.post(player.url, JSON.stringify(content));
+    }
+};
+GameServer.prototype.serve = function (request) {
+    switch (request.action) {
+        case "join":
+            return this.serveJoin(request);
     }
 };
 GameServer.prototype.serveJoin = function (request) {
