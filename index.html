@@ -52,7 +52,6 @@
         <div id="divField" class="flxc flxp-ccs">
             <div v-if="spawned" id="divPlayers" class="flxc">
                 <div v-for="player in client.game.players" class="player flxp-rcs">
-                    <span class="player__img"></span>
                     <div class="flxc flxp-ccs">
                         <div class="flxp-rsc">
                             <span class="player__number bandaid"
@@ -63,8 +62,10 @@
                         </div>
                         <textarea class="flxc txt player__note" 
                             :readonly="player.url !== client.me.url"
+                            onchange="updateNote()"
                             >You can take some note here. </textarea>
                     </div>
+                    <span class="player__img"></span>
                 </div>
             </div>
         </div>

@@ -2,14 +2,23 @@
 let log = console.log;
 
 const IP = require("ip");
+const IPAdress = require("ip-address");
 const express = require("express");
 const bodyParser = require("body-parser");
 
 const { common } = require("./common.js");
 
+// let IPv4 = function (ip) {
+//     return ip.replace(/^(.+:)?(\d{1,3}(\.\d{1,3}){3})$/, "$2");
+// };
 let IPPort = function (ip, port) {
     return `http://${ip}:${port}`;
 };
+// let sameIP = function (a, b) {
+//     let p = /^(\w+:\/\/)?(::ffff:)?(\d{1,3}(\.\d{1,3}){3})(:\d{1,4})?(\/.+$)?/;
+//     let r = "$3";
+//     return a.replace(p, r) === b.replace(p, r);
+// };
 
 let GameServer = function (port, host) {
     this.port = port;
@@ -24,6 +33,8 @@ let GameServer = function (port, host) {
     server.all("/", (req, res) => {
         let respond = content => res.send(JSON.stringify(content));
         let request = common.json.parse(req.body, { action: "" });
+        // let ip = new IPAdress.Address6(req.ip).to4().address;
+        // log(ip);
         respond(this.serve(request));
     });
     server.listen(this.port);
@@ -59,9 +70,12 @@ GameServer.prototype.serveJoin = function (request) {
     }
     return {
         result: "joined",
-        url: this.url,
-        host: this.host,
-        stage: this.stage
+        game: {
+            url: this.url,
+            host: this.host,
+            stage: this.stage,
+            players: this.players
+        }
     };
 };
 exports.GameServer = GameServer;
@@ -106,13 +120,20 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
             if (response.result === "rejected") {
                 onRejected();
             } else if (response.result === "joined") {
-                client.game.url = response.url;
-                client.game.host = response.host;
-                client.game.stage = response.stage;
+                for (let key in response.game) {
+                    client.game[key] = response.game[key];
+                }
                 client.game.joined = true;
                 onJoined();
             }
         }
     });
+};
+GameClient.prototype.updateNote = function (note) {
+    let content = { action: "update", data: { note } };
+    for (let player of this.game.players) {
+        if (player.url === this.me.url) continue;
+        common.http.post(player.url, content);
+    }
 };
 exports.GameClient = GameClient;

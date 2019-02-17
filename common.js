@@ -5,7 +5,7 @@ json.parse = function (string, init = {}) {
     try {
         return JSON.parse(string);
     } catch (ex) {
-        return init; 
+        return init;
     }
 };
 common.json = json;
@@ -22,8 +22,8 @@ http.post = function (url, content, listener) {
     xhttp.onreadystatechange = listener;
     xhttp.open("POST", url, true);
     xhttp.send(content);
-    log(url); 
-    log(content); 
+    log(url);
+    log(content);
 };
 common.http = http;
 
