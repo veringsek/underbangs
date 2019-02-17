@@ -16,7 +16,7 @@
                 <input type="text" id="txtClientName" class="txt txt-center"
                     value="Jack" />
                 <input type="text" id="txtClientPort" class="txt txt-center"
-                    value="9488" />
+                    value="9487" />
                 <span id="btnSpawn" class="btn flxc" 
                     onclick="spawnclient(txtClientPort.value, txtClientName.value)">
                     Spawn</span>
@@ -24,12 +24,12 @@
             <div v-if="spawned" id="divWelcome" class="flxp-ccs loading-stage"
                 :class="{ focus: loadingStage === 'join-game' }">
                 <input type="text" id="txtJoinURL" class="txt txt-center"
-                    value="http://127.0.0.1:9487" />
+                    value="http://127.0.0.1:9488" />
                 <span id="btnJoin" class="btn flxc" 
                     onclick="joingame(txtJoinURL.value)">
                     Join</span>
                 <span style="text-align: center">OR</span>
-                <input type="text" id="txtServerPort" class="txt txt-center" value="9487" />
+                <input type="text" id="txtServerPort" class="txt txt-center" value="9488" />
                 <span id="btnHost" class="btn flxc"
                     onclick="hostgame(txtServerPort.value)">
                     Host</span>

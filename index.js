@@ -6,8 +6,8 @@ const { common } = require("./common.js");
 const { GameServer, GameClient } = require("./game.js");
 
 // Constants
-const PORT_SERVER = 9487;
-const PORT_CLIENT = 9488;
+const PORT_SERVER = 9488;
+const PORT_CLIENT = 9487;
 
 // Methods
 let init = function () {
