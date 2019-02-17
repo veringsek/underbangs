@@ -39,9 +39,10 @@ http.route = function (path = [], params) {
     }
     return `/${path.join("/")}${http.query(params)}`;
 };
-http.query = function (params) {
-    if (!params) return "";
-    return `?${Object.keys(params).map(key => `${key}=${params[key]}`).join("&")}`;
+http.query = function (params = {}) {
+    let keys = Object.keys(params);
+    if (keys.length < 1) return "";
+    return `?${keys.map(key => `${key}=${params[key]}`).join("&")}`;
 };
 common.http = http;
 

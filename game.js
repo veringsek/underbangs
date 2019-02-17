@@ -10,18 +10,6 @@ const bodyParser = require("body-parser");
 const { common } = require("./common.js");
 const HTTP = common.http;
 
-// let IPv4 = function (ip) {
-//     return ip.replace(/^(.+:)?(\d{1,3}(\.\d{1,3}){3})$/, "$2");
-// };
-// let IPPort = function (ip, port) {
-//     return `http://${ip}:${port}`;
-// };
-// let sameIP = function (a, b) {
-//     let p = /^(\w+:\/\/)?(::ffff:)?(\d{1,3}(\.\d{1,3}){3})(:\d{1,4})?(\/.+$)?/;
-//     let r = "$3";
-//     return a.replace(p, r) === b.replace(p, r);
-// };
-
 let GameServer = function (port, host) {
     this.port = port;
     this.url = HTTP.head(DEVICE_IP, this.port);
@@ -62,15 +50,9 @@ GameServer.prototype.addPlayer = function (player) {
 GameServer.prototype.updatePlayers = function () {
     for (let player of this.players) {
         let content = { action: "update", data: { players: this.players } };
-        HTTP.post(player.url, JSON.stringify(content));
+        HTTP.post(HTTP.url(player.url, "update"), content);
     }
 };
-// GameServer.prototype.serve = function (request) {
-//     switch (request.action) {
-//         case "join":
-//             return this.serveJoin(request);
-//     }
-// };
 GameServer.prototype.serveJoin = function (request) {
     let success = this.addPlayer(request.player);
     if (!success) {
@@ -98,6 +80,19 @@ let GameClient = function (port, name = "Noname") {
     let client = express();
     client.use(bodyParser.text());
     client.use(bodyParser.urlencoded({ extended: true }));
+    client.post("/update", (req, res) => {
+        let respond = content => res.send(JSON.stringify(content));
+        let request = common.json.parse(req.body, { action: "" });
+        let data = request.data;
+        for (let datum in data) {
+            switch (datum) {
+                case "players": {
+                    this.game.players = data.players;
+                    break; 
+                }
+            }
+        }
+    });
     client.all("/", (req, res) => {
         let respond = content => res.send(JSON.stringify(content));
         let request = common.json.parse(req.body, { action: "" });
