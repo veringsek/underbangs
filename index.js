@@ -30,8 +30,8 @@ let init = function () {
         }
     });
 };
-let spawnclient = (port = PORT_CLIENT) => {
-    gameclient = new GameClient(port);
+let spawnclient = (port = PORT_CLIENT, name) => {
+    gameclient = new GameClient(port, name);
     vm.client = gameclient;
     vm.loadingStage = "join-game";
 };
@@ -43,4 +43,11 @@ let joingame = (url) => {
     gameclient.join(url, () => {
         vm.loadingStage = "in-game";
     });
-}
+};
+
+let stage = (code) => {
+    switch (code) {
+        case "wait": 
+            return "Waiting for players..."; 
+    }
+};

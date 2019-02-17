@@ -59,17 +59,15 @@ GameServer.prototype.serveJoin = function (request) {
     }
     return {
         result: "joined",
-        url: this.url, 
-        host: this.host
+        url: this.url,
+        host: this.host,
+        stage: this.stage
     };
 };
 exports.GameServer = GameServer;
 
-let GameClient = function (port) {
-    this.me = {
-        url: IPPort(IP.address(), port),
-        name: "Jack"
-    }
+let GameClient = function (port, name = "Noname") {
+    this.me = { url: IPPort(IP.address(), port), name };
     this.game = {
         joined: false,
         players: []
@@ -99,7 +97,7 @@ let GameClient = function (port) {
     client.listen(port);
     this.client = client;
 };
-GameClient.prototype.join = function (url, onJoined, onRejected) {
+GameClient.prototype.join = function (url, onJoined = () => null, onRejected = () => null) {
     let content = { action: "join", player: this.me };
     let client = this;
     common.http.post(url, content, function () {
@@ -110,6 +108,7 @@ GameClient.prototype.join = function (url, onJoined, onRejected) {
             } else if (response.result === "joined") {
                 client.game.url = response.url;
                 client.game.host = response.host;
+                client.game.stage = response.stage;
                 client.game.joined = true;
                 onJoined();
             }

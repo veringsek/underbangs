@@ -44,6 +44,12 @@ textarea:focus, input:focus{
     text-align: center; 
 }
 
+.lbl {
+    margin: 5px; 
+    padding: 3px; 
+    font-size: 14pt; 
+}
+
 .section {
     padding: 20px; 
     background: #91C6AA; 
@@ -93,6 +99,10 @@ textarea:focus, input:focus{
 }
 .player__note {
     resize: none; 
+}
+
+#divHostControls {
+    margin-top: 50px; 
 }
 
 #divPlayers {
