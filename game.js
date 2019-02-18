@@ -110,8 +110,8 @@ let GameClient = function (port, name = "Noname") {
                 break;
             }
             case "note": {
-                let player = this.game.players[req.query.playernumber];
-                player.note = request.note;
+                let question = this.game.questions[req.query.playernumber];
+                question.note = request.note;
                 break;
             }
         }
