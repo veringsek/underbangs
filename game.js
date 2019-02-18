@@ -72,7 +72,7 @@ GameServer.prototype.serveJoin = function (request) {
             url: this.url,
             host: this.host,
             stage: this.stage,
-            players: this.players, 
+            players: this.players,
             menumber
         }
     };
@@ -88,7 +88,8 @@ let GameClient = function (port, name = "Noname") {
     this.me = { url: HTTP.head(DEVICE_IP, port), name };
     this.game = {
         joined: false,
-        players: []
+        players: [],
+        questions: []
     };
 
     let client = express();
@@ -100,6 +101,11 @@ let GameClient = function (port, name = "Noname") {
         let target = req.query.target;
         switch (target) {
             case "players": {
+                // temp method
+                this.game.questions = [];
+                for (let player of request.players) {
+                    this.game.questions.splice(player.number, 0, { note: "" });
+                }
                 this.game.players = request.players;
                 break;
             }
