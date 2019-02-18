@@ -28,9 +28,15 @@ textarea:focus, input:focus{
     border-radius: 5px; 
     border: 2px solid black; 
     text-align: center;
+    background: black; 
+    color: white; 
+    cursor: pointer;
+    transition: 0.5s;
+}
+.btn:hover {
     background: white; 
     color: black; 
-    cursor: pointer;
+    transition: 0.5s;
 }
 
 .txt {

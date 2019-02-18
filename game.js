@@ -10,6 +10,15 @@ const bodyParser = require("body-parser");
 const { common } = require("./common.js");
 const HTTP = common.http;
 
+let respond = function (res, content) {
+    res.send(JSON.stringify(content));
+};
+
+/**
+ * GameServer
+ * @param {Number} port the port for game server to listen
+ * @param {string} host the game host's url
+ */
 let GameServer = function (port, host) {
     this.port = port;
     this.url = HTTP.head(DEVICE_IP, this.port);
@@ -21,9 +30,9 @@ let GameServer = function (port, host) {
     server.use(bodyParser.text());
     server.use(bodyParser.urlencoded({ extended: true }));
     server.post("/join/", (req, res) => {
-        let respond = content => res.send(JSON.stringify(content));
+        // let respond = content => res.send(JSON.stringify(content));
         let request = common.json.parse(req.body, {});
-        respond(this.serveJoin(request));
+        respond(res, this.serveJoin(request));
     });
     server.all("/", (req, res) => {
         let respond = content => res.send(JSON.stringify(content));
@@ -38,13 +47,13 @@ let GameServer = function (port, host) {
 GameServer.prototype.addPlayer = function (player) {
     for (let any of this.players) {
         if (player.url === any.url) {
-            return false;
+            return -1;// or rejoin?
         }
     }
     player.number = this.players.length;
     this.players.push(player);
     this.updatePlayers();
-    return true;
+    return player.number;
 };
 GameServer.prototype.updatePlayers = function () {
     for (let player of this.players) {
@@ -53,8 +62,8 @@ GameServer.prototype.updatePlayers = function () {
     }
 };
 GameServer.prototype.serveJoin = function (request) {
-    let success = this.addPlayer(request.player);
-    if (!success) {
+    let menumber = this.addPlayer(request.player);
+    if (menumber < 0) {
         return { result: "rejected" };
     }
     return {
@@ -63,12 +72,18 @@ GameServer.prototype.serveJoin = function (request) {
             url: this.url,
             host: this.host,
             stage: this.stage,
-            players: this.players
+            players: this.players, 
+            menumber
         }
     };
 };
 exports.GameServer = GameServer;
 
+/**
+ * GameClient
+ * @param {int} port the port for game client to listen
+ * @param {string} name player's name
+ */
 let GameClient = function (port, name = "Noname") {
     this.me = { url: HTTP.head(DEVICE_IP, port), name };
     this.game = {
@@ -86,6 +101,11 @@ let GameClient = function (port, name = "Noname") {
         switch (target) {
             case "players": {
                 this.game.players = request.players;
+                break;
+            }
+            case "note": {
+                let player = this.game.players[req.query.playernumber];
+                player.note = request.note;
                 break;
             }
         }
@@ -116,10 +136,12 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
     });
 };
 GameClient.prototype.updateNote = function (note) {
-    let content = { data: { note } };
+    let content = { note };
     for (let player of this.game.players) {
         if (player.url === this.me.url) continue;
-        HTTP.post(player.url, content);
+        HTTP.post(HTTP.url(player.url, "update", {
+            target: "note", playernumber: this.game.menumber
+        }), content);
     }
 };
 exports.GameClient = GameClient;
