@@ -96,7 +96,7 @@ GameServer.prototype.setRound = function (round) {
 GameServer.prototype.setQuestiontos = function (questiontos) {
     this.questiontos = questiontos;
     this.broadcast({ questiontos }, "update", { target: "questiontos" });
-}
+};
 GameServer.prototype.stageStart = function () {
     this.setStage("start");
 };
