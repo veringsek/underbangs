@@ -49,6 +49,14 @@ let stage = (code) => {
     switch (code) {
         case "wait":
             return "Waiting for players...";
+        case "start":
+            return "Game Start";
+        case "ask":
+            return "Ask";
+        case "round":
+            return "Guess It!";
+        case "end": 
+            return "Game Over";
         default:
             return code;
     }

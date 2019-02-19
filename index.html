@@ -40,9 +40,23 @@
                 :class="{ focus: loadingStage === 'in-game' }">
                 <div class="flxc">
                     <span class="lbl">{{stage(client.game.stage)}}</span>
-                    <span v-if="client.game.stage === 'round'" class="lbl">
-                        {{client.game.round}}
-                    </span>
+                    <div v-if="client.game.stage === 'ask'" class="flxp-ccs">
+                        <span class="lbl">Question</span>
+                        <input type="text" id="txtQuestion" class="txt"
+                            placeholder="Question" />
+                        <span class="lbl">Reference Link</span>
+                        <input type="text" id="txtLink" class="txt"
+                            placeholder="Reference Link" />
+                        <span class="lbl">Image Link</span>
+                        <input type="text" id="txtImage" class="txt"
+                            placeholder="Image Link" />
+                        <span class="player__img"></span>
+                    </div>
+                    <div v-if="client.game.stage === 'round'" class="flxp-ccs">
+                        <span v-if="client.game.stage === 'round'" class="lbl">
+                            {{client.game.round}}
+                        </span>
+                    </div>
                 </div>
                 <div v-if="ishost" id="divHostControls" class="flxp-ccs">
                     <span id="txtHostControls" class="btn">Host Controls</span>

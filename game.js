@@ -47,8 +47,8 @@ let GameServer = function (port, host) {
                         break;
                     }
                     case "ask": {
-                        this.setStage("round");
-                        this.setRound(0);
+                        // this.setStage("round");
+                        // this.setRound(0);
                         break;
                     }
                     case "round": {
@@ -102,15 +102,16 @@ GameServer.prototype.addPlayer = function (player) {
     }
     player.number = this.players.length;
     this.players.push(player);
-    this.updatePlayers();
+    this.broadcast({ players: this.players }, "update", { target: "players" });
+    // this.updatePlayers();
     return player.number;
 };
-GameServer.prototype.updatePlayers = function () {
-    for (let player of this.players) {
-        let content = { players: this.players };
-        HTTP.post(HTTP.url(player.url, "update", { target: "players" }), content);
-    }
-};
+// GameServer.prototype.updatePlayers = function () {
+//     for (let player of this.players) {
+//         let content = { players: this.players };
+//         HTTP.post(HTTP.url(player.url, "update", { target: "players" }), content);
+//     }
+// };
 GameServer.prototype.serveJoin = function (request) {
     let menumber = this.addPlayer(request.player);
     if (menumber < 0) {
