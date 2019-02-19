@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Under Bangs (瀏海下的秘密) (originally: playard)</title>
+    <title>Underbangs</title>
     <link rel="stylesheet" type="text/css" href="flex.css">
     <link rel="stylesheet" type="text/css" href="index.css">
     <script type="text/javascript" src="vue.min.js"></script>
@@ -39,7 +39,7 @@
             <div v-if="ingame" id="divGameRound" class="flxc flxp-css loading-stage"
                 :class="{ focus: loadingStage === 'in-game' }">
                 <div class="flxc flxp-css">
-                    <span class="lbl">{{stage(client.game.stage)}}</span>
+                    <span class="stage__title" readonly>{{stage(client.game.stage)}}</span>
                     <div v-if="client.game.stage === 'ask'" class="flxp-ccs">
                         <span class="lbl">You are asking </span>
                         <div>
@@ -90,13 +90,11 @@
                             placeholder="You can take some note here. "></textarea>
                     </div>
                 </div>
-                <div v-if="ishost" id="divHostControls" class="flxp-ccs">
-                    <div class="flxp-rcc">
-                        <span id="btnGameRoundNext" class="btn"
-                            v-on:click="client.controlServerNext()">Next</span>
-                        <span id="btnGameRoundEnd" class="btn">End</span>
-                        <span id="btnGameRoundRestart" class="btn">Restart</span>
-                    </div>
+                <div v-if="ishost" id="divHostControls" class="flxp-rcc">
+                    <span id="btnGameRoundNext" class="btn flxc"
+                        v-on:click="client.controlServerNext()">Next</span>
+                    <span id="btnGameRoundEnd" class="btn flxc">End</span>
+                    <span id="btnGameRoundRestart" class="btn flxc">Restart</span>
                 </div>
             </div>
         </div>
