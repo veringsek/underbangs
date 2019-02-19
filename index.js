@@ -47,8 +47,10 @@ let joingame = (url) => {
 
 let stage = (code) => {
     switch (code) {
-        case "wait": 
-            return "Waiting for players..."; 
+        case "wait":
+            return "Waiting for players...";
+        default:
+            return code;
     }
 };
 let updateNote = () => {

@@ -44,7 +44,10 @@
                 <div v-if="ishost" id="divHostControls" class="flxp-ccs">
                     <span id="txtHostControls" class="btn">Host Controls</span>
                     <div class="flxp-rcc">
-                        <span id="btnGameRoundNext" class="btn">Next</span>
+                        <span id="btnGameRoundNext" class="btn"
+                            v-on:click="client.controlServerNext()">
+                            Next
+                        </span>
                         <span id="btnGameRoundEnd" class="btn">End</span>
                         <span id="btnGameRoundRestart" class="btn">Restart</span>
                     </div>
@@ -63,7 +66,7 @@
                             <span class="player__link bandaid">Link</span>
                         </div>
                         <textarea class="flxc txt player__note" 
-                            :readonly="false && player.url !== client.me.url"
+                            :readonly="player.url !== client.me.url"
                             onchange="vm.client.updateNote(this.value)"
                             placeholder="You can take some note here. "
                             :value="client.game.questions[player.number].note"
