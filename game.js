@@ -198,8 +198,6 @@ let GameClient = function (port, name = "Noname") {
     });
     client.post("/ask", (req, res) => {
         let request = parseRequest(req);
-        log('kkkkkk')
-        log(request)
         this.setQuestion(request.to, {
             question: request.question,
             link: request.link,
@@ -248,10 +246,8 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
 GameClient.prototype.ask = function (question, link, image) {
     let to = this.game.questionto;
     for (let player of this.game.players) {
-        if (player.numebr === to) continue;
-        HTTP.post(HTTP.url(player.url, "ask"), {
-            to, question, link, image
-        });
+        if (player.number === to) continue;
+        HTTP.post(HTTP.url(player.url, "ask"), { to, question, link, image });
     }
 };
 GameClient.prototype.controlServerNext = function () {

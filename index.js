@@ -1,6 +1,9 @@
 // debug
 let log = console.log;
 
+// Node
+const { shell } = require("electron");
+
 // Imports
 const { common } = require("./common.js");
 const { GameServer, GameClient } = require("./game.js");
@@ -15,7 +18,10 @@ let init = function () {
         el: "#ribody",
         data: {
             loadingStage: "spawn-client",
-            client: undefined
+            client: undefined, 
+            questionOf: function (number) {
+                return vm.client.game.questions[number];
+            }
         },
         computed: {
             spawned: function () {
@@ -66,4 +72,7 @@ let setBGI = (element, url = "") => {
 };
 let ask = () => {
     vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value);
+};
+let openLinkInBrowser = (url) => {
+    shell.openExternal(url);
 };

@@ -91,7 +91,14 @@
                                 #{{player.number}}
                             </span>
                             <span class="player__name flxc">{{player.name}}</span>
-                            <span class="player__link bandaid">Link</span>
+                        </div>
+                        <div v-if="player.number !== client.game.menumber"
+                            class="flxp-rsc">
+                            <span class="player__link bandaid"
+                                :href="questionOf(player.number).link"
+                                onclick="openLinkInBrowser(this.href)">Link</span>
+                            <span class="player__question lbl"
+                                >{{questionOf(player.number).question}}</span>
                         </div>
                         <textarea class="flxc txt player__note" 
                             :readonly="player.url !== client.me.url"
@@ -101,7 +108,8 @@
                             v-model="client.game.questions[player.number].note"
                             ></textarea>
                     </div>
-                    <span class="player__img"></span>
+                    <span class="player__img"
+                        :style=" { 'background-image': `url(${questionOf(player.number).image})` } "></span>
                 </div>
             </div>
         </div>
