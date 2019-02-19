@@ -77,3 +77,10 @@ let openLinkInBrowser = (url) => {
     log(url);
     shell.openExternal(url);
 };
+let toggleBigImage = (element) => {
+    if (element.style.backgroundSize === "contain") {
+        element.style.backgroundSize = "cover"; 
+    } else {
+        element.style.backgroundSize = "contain";
+    }
+};

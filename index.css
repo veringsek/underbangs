@@ -95,9 +95,12 @@ textarea:focus, input:focus{
     width: 200px; 
     height: 200px; 
     margin: 5px; 
+    border-radius: 5px; 
+    border: 2px solid black; 
     background: lightgrey; 
     background-repeat: no-repeat;
     background-position: center; 
+    background-size: cover;
 }
 .player__number {
     font-weight: bold; 
