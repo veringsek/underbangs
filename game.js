@@ -13,7 +13,7 @@ const HTTP = common.http;
 let parseRequest = function (req, init = {}) {
     return common.json.parse(req.body, init);
 };
-let respond = function (res, content) {
+let respond = function (res, content = {}) {
     res.send(JSON.stringify(content));
 };
 
@@ -28,19 +28,46 @@ let GameServer = function (port, host) {
     this.host = host;
     this.players = [];
     this.stage = "wait";
+    this.round = -1;
 
     let server = express();
     server.use(bodyParser.text());
     server.use(bodyParser.urlencoded({ extended: true }));
     server.post("/control", (req, res) => {
         let request = parseRequest(req, {});
-        log(request)
         switch (request.command) {
             case "next": {
-                this.setStage("start");
+                switch (this.stage) {
+                    case "wait": {
+                        this.setStage("start");
+                        break;
+                    }
+                    case "start": {
+                        this.setStage("ask");
+                        break;
+                    }
+                    case "ask": {
+                        this.setStage("round");
+                        this.setRound(0);
+                        break;
+                    }
+                    case "round": {
+                        let round = this.round += 1;
+                        if (this.round >= this.players.length) {
+                            round = 0;
+                        }
+                        this.setRound(round);
+                        break;
+                    }
+                    case "end": {
+                        this.setStage("start");
+                        break;
+                    }
+                }
                 break;
             }
         }
+        respond(res);
     });
     server.post("/join", (req, res) => {
         let request = parseRequest(req, {});
@@ -63,8 +90,11 @@ GameServer.prototype.setStage = function (stage) {
     this.stage = stage;
     this.broadcast({ stage }, "update", { target: "stage" });
 };
+GameServer.prototype.setRound = function (round) {
+    this.round = round;
+    this.broadcast({ round }, "update", { target: "round" });
+};
 GameServer.prototype.addPlayer = function (player) {
-    log(player);
     for (let any of this.players) {
         if (player.url === any.url) {
             return -1;// or rejoin?
@@ -91,6 +121,7 @@ GameServer.prototype.serveJoin = function (request) {
         url: this.url,
         host: this.host,
         stage: this.stage,
+        round: this.round,
         menumber
     };
 };
@@ -107,6 +138,7 @@ let GameClient = function (port, name = "Noname") {
         url: "",
         host: "",
         stage: "",
+        round: -1,
         joined: false,
         players: [],
         questions: []
@@ -116,8 +148,7 @@ let GameClient = function (port, name = "Noname") {
     client.use(bodyParser.text());
     client.use(bodyParser.urlencoded({ extended: true }));
     client.post("/update", (req, res) => {
-        let respond = content => res.send(JSON.stringify(content));
-        let request = common.json.parse(req.body, {});
+        let request = parseRequest(req, {});
         let target = req.query.target;
         switch (target) {
             case "players": {
@@ -133,24 +164,27 @@ let GameClient = function (port, name = "Noname") {
                 this.game.stage = request.stage;
                 break;
             }
+            case "round": {
+                this.game.round = request.round;
+                break;
+            }
             case "note": {
                 let question = this.game.questions[req.query.playernumber];
                 question.note = request.note;
                 break;
             }
         }
+        respond(res);
     });
     client.all("/", (req, res) => {
-        let respond = content => res.send(JSON.stringify(content));
-        let request = common.json.parse(req.body, {});
+        let request = parseRequest(req, {});
     });
     client.listen(port);
     this.client = client;
 };
 GameClient.prototype.join = function (url, onJoined = () => null, onRejected = () => null) {
-    let content = { player: this.me };
     let client = this;
-    HTTP.post(HTTP.url(url, "join"), content, function () {
+    HTTP.post(HTTP.url(url, "join"), { player: this.me }, function () {
         if (HTTP.ready(this)) {
             let response = common.json.parse(this.responseText, {});
             if (response.result === "rejected") {
@@ -162,6 +196,7 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
                 client.game.url = response.url;
                 client.game.host = response.host;
                 client.game.stage = response.stage;
+                client.game.round = response.round;
                 client.game.menumber = response.menumber;
                 client.game.joined = true;
                 onJoined();

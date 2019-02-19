@@ -40,6 +40,9 @@
                 :class="{ focus: loadingStage === 'in-game' }">
                 <div class="flxc">
                     <span class="lbl">{{stage(client.game.stage)}}</span>
+                    <span v-if="client.game.stage === 'round'" class="lbl">
+                        {{client.game.round}}
+                    </span>
                 </div>
                 <div v-if="ishost" id="divHostControls" class="flxp-ccs">
                     <span id="txtHostControls" class="btn">Host Controls</span>
