@@ -166,7 +166,12 @@ let GameClient = function (port, name = "Noname") {
                 // temp method
                 this.game.questions = [];
                 for (let player of request.players) {
-                    this.game.questions.push({ note: "" });
+                    this.game.questions.push({
+                        question: "",
+                        link: "",
+                        image: "",
+                        note: ""
+                    });
                 }
                 this.game.players = request.players;
                 break;
@@ -191,6 +196,17 @@ let GameClient = function (port, name = "Noname") {
         }
         respond(res);
     });
+    client.post("/ask", (req, res) => {
+        let request = parseRequest(req);
+        log('kkkkkk')
+        log(request)
+        this.setQuestion(request.to, {
+            question: request.question,
+            link: request.link,
+            image: request.image
+        });
+        respond(res);
+    });
     client.all("/", (req, res) => {
         let request = parseRequest(req, {});
     });
@@ -200,6 +216,12 @@ let GameClient = function (port, name = "Noname") {
 GameClient.prototype.setQuestiontos = function (questiontos) {
     this.game.questiontos = questiontos;
     this.game.questionto = this.game.questiontos[this.game.menumber];
+};
+GameClient.prototype.setQuestion = function (number, question) {
+    let q = this.game.questions[number];
+    q.question = question.question;
+    q.link = question.link;
+    q.image = question.image;
 };
 GameClient.prototype.join = function (url, onJoined = () => null, onRejected = () => null) {
     let client = this;
@@ -222,6 +244,15 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
             }
         }
     });
+};
+GameClient.prototype.ask = function (question, link, image) {
+    let to = this.game.questionto;
+    for (let player of this.game.players) {
+        if (player.numebr === to) continue;
+        HTTP.post(HTTP.url(player.url, "ask"), {
+            to, question, link, image
+        });
+    }
 };
 GameClient.prototype.controlServerNext = function () {
     if (!this.game.joined) return false;

@@ -49,19 +49,19 @@
                                 >{{client.game.players[client.game.questionto].name}}</span>
                         </div>
                         <span class="lbl">Question</span>
-                        <input type="text" id="txtQuestion" class="txt"
+                        <input type="text" id="txtAskQuestion" class="txt"
                             placeholder="Question" />
                         <span class="lbl">Reference Link</span>
-                        <input type="text" id="txtLink" class="txt"
+                        <input type="text" id="txtAskLink" class="txt"
                             placeholder="Reference Link" />
                         <span class="lbl">Image Link</span>
-                        <input type="text" id="txtImage" class="txt"
-                            onchange="setBGI(imgQuestionImagePreview, this.value)"
+                        <input type="text" id="txtAskImage" class="txt"
+                            onchange="setBGI(imgAskImagePreview, this.value)"
                             placeholder="Image Link" />
                         <div class="flxp-rcs">
-                            <span id="imgQuestionImagePreview" class="player__img"></span>
+                            <span id="imgAskImagePreview" class="player__img"></span>
                         </div>
-                        <span class="btn">Ask!</span>
+                        <span class="btn" onclick="ask()">Ask!</span>
                     </div>
                     <div v-if="client.game.stage === 'round'" class="flxp-ccs">
                         <span v-if="client.game.stage === 'round'" class="lbl">
@@ -74,8 +74,7 @@
                     <div class="flxp-rcc">
                         <span id="btnGameRoundNext" class="btn"
                             v-on:click="client.controlServerNext()">
-                            Next
-                        </span>
+                            Next</span>
                         <span id="btnGameRoundEnd" class="btn">End</span>
                         <span id="btnGameRoundRestart" class="btn">Restart</span>
                     </div>

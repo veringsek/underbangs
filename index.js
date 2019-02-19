@@ -64,3 +64,6 @@ let stage = (code) => {
 let setBGI = (element, url = "") => {
     element.style.backgroundImage = `url('${url}')`;
 };
+let ask = () => {
+    vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value);
+};
