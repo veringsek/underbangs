@@ -47,6 +47,13 @@
     align-items: stretch;
     flex-wrap: nowrap; 
 }
+.flxp-csc {
+    display: flex; 
+    flex-direction: column;
+    justify-content: stretch; 
+    align-items: center;
+    flex-wrap: nowrap; 
+}
 
 .flxc, .flxc-1 {
     flex: 1; 
