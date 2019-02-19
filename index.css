@@ -113,6 +113,9 @@ textarea:focus, input:focus{
     resize: none; 
     min-height: 60px;
 }
+.player__question {
+    cursor: pointer;
+}
 
 #divHostControls {
     margin-top: 20px; 

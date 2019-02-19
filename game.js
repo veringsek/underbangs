@@ -188,7 +188,7 @@ let GameClient = function (port, name = "Noname") {
                 this.game.questions = [];
                 for (let player of request.players) {
                     this.game.questions.push({
-                        question: "",
+                        question: "???",
                         link: "",
                         image: "",
                         note: ""
@@ -247,9 +247,6 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
             if (response.result === "rejected") {
                 onRejected();
             } else if (response.result === "joined") {
-                // for (let key in response.game) {
-                //     client.game[key] = response.game[key];
-                // }
                 client.game.url = response.url;
                 client.game.host = response.host;
                 client.game.stage = response.stage;

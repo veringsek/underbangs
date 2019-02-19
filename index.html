@@ -79,21 +79,18 @@
                         <span class="player__img"
                             :style=" { 'background-image': `url(${questionOf(client.game.round).image})` } "></span>
                         <span class="player__question lbl"
-                            >{{questionOf(client.game.round).question}}</span>
-                        <span class="player__link bandaid"
                             :title="questionOf(client.game.round).link"
-                            onclick="openLinkInBrowser(this.title)">Link</span>
-                        <textarea class="flxc txt player__note" 
+                            onclick="openLinkInBrowser(this.title)"
+                            >{{questionOf(client.game.round).question}}</span>
+                        <textarea class="flxc txt player__note"
                             :readonly="client.game.round !== client.game.menumber"
-                            onchange="vm.client.updateNote(this.value)"
-                            placeholder="You can take some note here. "
                             :value="client.game.questions[client.game.round].note"
                             v-model="client.game.questions[client.game.round].note"
-                            ></textarea>
+                            onchange="vm.client.updateNote(this.value)"
+                            placeholder="You can take some note here. "></textarea>
                     </div>
                 </div>
                 <div v-if="ishost" id="divHostControls" class="flxp-ccs">
-                    <span id="txtHostControls" class="btn">Host Controls</span>
                     <div class="flxp-rcc">
                         <span id="btnGameRoundNext" class="btn"
                             v-on:click="client.controlServerNext()">Next</span>
@@ -116,10 +113,9 @@
                         </div>
                         <div v-if="player.number !== client.game.menumber"
                             class="flxp-rsc">
-                            <span class="player__link bandaid"
-                                :title="questionOf(player.number).link"
-                                onclick="openLinkInBrowser(this.title)">Link</span>
                             <span class="player__question lbl"
+                                :title="questionOf(player.number).link"
+                                onclick="openLinkInBrowser(this.title)"
                                 >{{questionOf(player.number).question}}</span>
                         </div>
                         <textarea class="flxc txt player__note" 
