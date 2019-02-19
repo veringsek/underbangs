@@ -29,6 +29,7 @@ let GameServer = function (port, host) {
     this.players = [];
     this.stage = "wait";
     this.round = -1;
+    this.questiontos = [];
 
     let server = express();
     server.use(bodyParser.text());
@@ -39,11 +40,11 @@ let GameServer = function (port, host) {
             case "next": {
                 switch (this.stage) {
                     case "wait": {
-                        this.setStage("start");
+                        this.stageStart();
                         break;
                     }
                     case "start": {
-                        this.setStage("ask");
+                        this.stageAsk();
                         break;
                     }
                     case "ask": {
@@ -75,8 +76,6 @@ let GameServer = function (port, host) {
     });
     server.all("/", (req, res) => {
         // let ip = new IPAdress.Address6(req.ip).to4().address;
-        // log(ip);
-        // respond(this.serve(request));
     });
     server.listen(this.port);
     this.server = server;
@@ -94,6 +93,22 @@ GameServer.prototype.setRound = function (round) {
     this.round = round;
     this.broadcast({ round }, "update", { target: "round" });
 };
+GameServer.prototype.setQuestiontos = function (questiontos) {
+    this.questiontos = questiontos;
+    this.broadcast({ questiontos }, "update", { target: "questiontos" });
+}
+GameServer.prototype.stageStart = function () {
+    this.setStage("start");
+};
+GameServer.prototype.stageAsk = function () {
+    let questiontos = [];
+    for (let player of this.players) {
+        questiontos.push(player.number);
+    }
+    questiontos.push(questiontos.splice(0, 1)[0]);
+    this.setQuestiontos(questiontos);
+    this.setStage("ask");
+};
 GameServer.prototype.addPlayer = function (player) {
     for (let any of this.players) {
         if (player.url === any.url) {
@@ -103,15 +118,8 @@ GameServer.prototype.addPlayer = function (player) {
     player.number = this.players.length;
     this.players.push(player);
     this.broadcast({ players: this.players }, "update", { target: "players" });
-    // this.updatePlayers();
     return player.number;
 };
-// GameServer.prototype.updatePlayers = function () {
-//     for (let player of this.players) {
-//         let content = { players: this.players };
-//         HTTP.post(HTTP.url(player.url, "update", { target: "players" }), content);
-//     }
-// };
 GameServer.prototype.serveJoin = function (request) {
     let menumber = this.addPlayer(request.player);
     if (menumber < 0) {
@@ -140,6 +148,8 @@ let GameClient = function (port, name = "Noname") {
         host: "",
         stage: "",
         round: -1,
+        questiontos: [],
+        questionto: -1,
         joined: false,
         players: [],
         questions: []
@@ -169,6 +179,10 @@ let GameClient = function (port, name = "Noname") {
                 this.game.round = request.round;
                 break;
             }
+            case "questiontos": {
+                this.setQuestiontos(request.questiontos);
+                break;
+            }
             case "note": {
                 let question = this.game.questions[req.query.playernumber];
                 question.note = request.note;
@@ -182,6 +196,10 @@ let GameClient = function (port, name = "Noname") {
     });
     client.listen(port);
     this.client = client;
+};
+GameClient.prototype.setQuestiontos = function (questiontos) {
+    this.game.questiontos = questiontos;
+    this.game.questionto = this.game.questiontos[this.game.menumber];
 };
 GameClient.prototype.join = function (url, onJoined = () => null, onRejected = () => null) {
     let client = this;

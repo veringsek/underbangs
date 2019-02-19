@@ -96,6 +96,8 @@ textarea:focus, input:focus{
     height: 200px; 
     margin: 5px; 
     background: lightgrey; 
+    background-repeat: no-repeat;
+    background-position: center; 
 }
 .player__number {
     font-weight: bold; 
@@ -108,7 +110,7 @@ textarea:focus, input:focus{
 }
 
 #divHostControls {
-    margin-top: 50px; 
+    margin-top: 20px; 
 }
 
 #divPlayers {

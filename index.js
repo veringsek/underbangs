@@ -61,6 +61,6 @@ let stage = (code) => {
             return code;
     }
 };
-let updateNote = () => {
-    gameclient
+let setBGI = (element, url = "") => {
+    element.style.backgroundImage = `url('${url}')`;
 };

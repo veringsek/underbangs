@@ -41,6 +41,13 @@
                 <div class="flxc">
                     <span class="lbl">{{stage(client.game.stage)}}</span>
                     <div v-if="client.game.stage === 'ask'" class="flxp-ccs">
+                        <span class="lbl">You are asking </span>
+                        <div>
+                            <span class="player__number bandaid"
+                                >#{{client.game.questionto}}</span>
+                            <span class="player__name flxc"
+                                >{{client.game.players[client.game.questionto].name}}</span>
+                        </div>
                         <span class="lbl">Question</span>
                         <input type="text" id="txtQuestion" class="txt"
                             placeholder="Question" />
@@ -49,8 +56,12 @@
                             placeholder="Reference Link" />
                         <span class="lbl">Image Link</span>
                         <input type="text" id="txtImage" class="txt"
+                            onchange="setBGI(imgQuestionImagePreview, this.value)"
                             placeholder="Image Link" />
-                        <span class="player__img"></span>
+                        <div class="flxp-rcs">
+                            <span id="imgQuestionImagePreview" class="player__img"></span>
+                        </div>
+                        <span class="btn">Ask!</span>
                     </div>
                     <div v-if="client.game.stage === 'round'" class="flxp-ccs">
                         <span v-if="client.game.stage === 'round'" class="lbl">
@@ -77,8 +88,9 @@
                     <div class="flxc flxp-ccs">
                         <div class="flxp-rsc">
                             <span class="player__number bandaid"
-                                :title="`Player No.${player.number}`"
-                                >#{{player.number}}</span>
+                                :title="`Player No.${player.number}`">
+                                #{{player.number}}
+                            </span>
                             <span class="player__name flxc">{{player.name}}</span>
                             <span class="player__link bandaid">Link</span>
                         </div>
