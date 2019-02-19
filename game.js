@@ -47,11 +47,6 @@ let GameServer = function (port, host) {
                         this.stageAsk();
                         break;
                     }
-                    case "ask": {
-                        // this.setStage("round");
-                        // this.setRound(0);
-                        break;
-                    }
                     case "round": {
                         let round = this.round += 1;
                         if (this.round >= this.players.length) {
@@ -71,9 +66,14 @@ let GameServer = function (port, host) {
         respond(res);
     });
     server.post("/join", (req, res) => {
-        let request = parseRequest(req, {});
+        let request = parseRequest(req);
         respond(res, this.serveJoin(request));
     });
+    server.post("/ask", (req, res) => {
+        let request = parseRequest(req);
+        this.confirmAsked(request.number);
+        respond(res);
+    })
     server.all("/", (req, res) => {
         // let ip = new IPAdress.Address6(req.ip).to4().address;
     });
@@ -102,12 +102,33 @@ GameServer.prototype.stageStart = function () {
 };
 GameServer.prototype.stageAsk = function () {
     let questiontos = [];
+    this.asked = [];
     for (let player of this.players) {
         questiontos.push(player.number);
+        this.asked.push(false);
     }
     questiontos.push(questiontos.splice(0, 1)[0]);
     this.setQuestiontos(questiontos);
     this.setStage("ask");
+};
+GameServer.prototype.confirmAsked = function (number) {
+    this.asked[number] = true;
+    let done = true;
+    for (let asked of this.asked) {
+        if (!asked) {
+            done = false;
+            break;
+        }
+    }
+    if (done) {
+        this.stageRound(0);
+    }
+};
+GameServer.prototype.stageRound = function (round) {
+    this.setRound(round);
+    if (this.stage !== "round") {
+        this.setStage("round");
+    }
 };
 GameServer.prototype.addPlayer = function (player) {
     for (let any of this.players) {
@@ -205,9 +226,6 @@ let GameClient = function (port, name = "Noname") {
         });
         respond(res);
     });
-    client.all("/", (req, res) => {
-        let request = parseRequest(req, {});
-    });
     client.listen(port);
     this.client = client;
 };
@@ -246,9 +264,10 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
 GameClient.prototype.ask = function (question, link, image) {
     let to = this.game.questionto;
     for (let player of this.game.players) {
-        // if (player.number === to) continue;
+        if (player.number === to) continue;
         HTTP.post(HTTP.url(player.url, "ask"), { to, question, link, image });
     }
+    HTTP.post(HTTP.url(this.game.url, "ask"), { number: this.game.menumber });
 };
 GameClient.prototype.controlServerNext = function () {
     if (!this.game.joined) return false;
