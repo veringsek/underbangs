@@ -74,5 +74,6 @@ let ask = () => {
     vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value);
 };
 let openLinkInBrowser = (url) => {
+    log(url);
     shell.openExternal(url);
 };

@@ -246,7 +246,7 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
 GameClient.prototype.ask = function (question, link, image) {
     let to = this.game.questionto;
     for (let player of this.game.players) {
-        if (player.number === to) continue;
+        // if (player.number === to) continue;
         HTTP.post(HTTP.url(player.url, "ask"), { to, question, link, image });
     }
 };

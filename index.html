@@ -92,11 +92,11 @@
                             </span>
                             <span class="player__name flxc">{{player.name}}</span>
                         </div>
-                        <div v-if="player.number !== client.game.menumber"
+                        <div v-if="true || player.number !== client.game.menumber"
                             class="flxp-rsc">
                             <span class="player__link bandaid"
-                                :href="questionOf(player.number).link"
-                                onclick="openLinkInBrowser(this.href)">Link</span>
+                                :title="questionOf(player.number).link"
+                                onclick="openLinkInBrowser(this.title)">Link</span>
                             <span class="player__question lbl"
                                 >{{questionOf(player.number).question}}</span>
                         </div>
