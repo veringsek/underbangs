@@ -23,7 +23,7 @@ let init = function () {
                 return vm.game.questions[number];
             },
             theater: {
-                image: null, 
+                image: null,
                 web: null
             },
             theaterClear: function () {
@@ -70,7 +70,8 @@ let joingame = (url) => {
     });
 };
 
-let stage = (code) => {
+// text
+let textStage = (code) => {
     switch (code) {
         case "wait":
             return "Waiting for players...";
@@ -86,6 +87,15 @@ let stage = (code) => {
             return code;
     }
 };
+let textAskorder = (askorder) => {
+    switch (askorder) {
+        case "+1":
+            return "+1";
+        case "random":
+            return "Random";
+    }
+};
+
 let setBGI = (element, url = "") => {
     element.style.backgroundImage = `url('${url}')`;
 };

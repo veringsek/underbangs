@@ -42,12 +42,14 @@
             <div v-if="ingame" id="divGameRound" class="flxc flxp-css loading-stage"
                 :class="{ focus: loadingStage === 'in-game' }">
                 <div class="flxc flxp-css">
-                    <span class="stage__title" readonly>{{stage(game.stage)}}</span>
+                    <span class="stage__title" readonly>{{textStage(game.stage)}}</span>
                     <div v-if="game.stage === 'start'" class="flxp-css">
                         <span class="lbl">Game settings</span>
-                        <div>
-                            <span class="lbl">Ask order</span>
-                            <span class="btn"></span>
+                        <div class="flxp-rsc">
+                            <span class="lbl flxc">Ask order</span>
+                            <span class="btn"
+                                v-on:click="client.controlServerAskorder()"
+                                >{{textAskorder(game.askorder)}}</span>
                         </div>
                     </div>
                     <div v-if="game.stage === 'ask'" class="flxp-ccs">

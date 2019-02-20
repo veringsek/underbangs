@@ -44,4 +44,32 @@ http.query = function (params = {}) {
 };
 common.http = http;
 
+let num = {};
+num.track = function (n, lowest, highest) {
+    if (!highest && highest !== 0) {
+        highest = lowest - 1;
+        lowest = 0;
+    }
+    let range = highest - lowest + 1;
+    while (n < lowest) {
+        n += range;
+    }
+    while (n > highest) {
+        n -= range;
+    }
+    return n;
+};
+num.random = (start, end, base = 1) => {
+    if (!end && end !== 0) {
+        end = start - 1;
+        start = 0;
+    }
+    if (Array.isArray(start)) {
+        return start[random(0, start.length - 1)];
+    } else {
+        return Math.floor(Math.random() * ((end - start) / base + 1)) * base + start;
+    }
+};
+common.num = num;
+
 exports.common = common;

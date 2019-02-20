@@ -64,7 +64,11 @@ let GameServer = function (port, host) {
                 break;
             }
             case "askorder": {
-                
+                let orders = ["+1", "random"];
+                let o = orders.indexOf(this.askorder);
+                o = common.num.track(o + 1, orders.length);
+                this.setAskorder(orders[o]);
+                break;
             }
         }
         respond(res);
@@ -95,6 +99,10 @@ GameServer.prototype.setRound = function (round) {
     this.round = round;
     this.broadcast({ round }, "update", { target: "round" });
 };
+GameServer.prototype.setAskorder = function (askorder) {
+    this.askorder = askorder;
+    this.broadcast({ askorder }, "update", { target: "askorder" });
+};
 GameServer.prototype.setQuestiontos = function (questiontos) {
     this.questiontos = questiontos;
     this.broadcast({ questiontos }, "update", { target: "questiontos" });
@@ -103,13 +111,46 @@ GameServer.prototype.stageStart = function () {
     this.setStage("start");
 };
 GameServer.prototype.stageAsk = function () {
+    // this.asked = [];
+    this.asked = this.players.map(() => false);
+    // for (let player of this.players) {
+    //     this.asked.push(false);
+    // }
     let questiontos = [];
-    this.asked = [];
-    for (let player of this.players) {
-        questiontos.push(player.number);
-        this.asked.push(false);
+    switch (this.askorder) {
+        case "+1": {
+            for (let player of this.players) {
+                questiontos.push(player.number);
+            }
+            questiontos.push(questiontos.splice(0, 1)[0]);
+            break;
+        }
+        case "random": {
+            let someoneAskSelf = () => {
+                let r = false;
+                log(questiontos)
+                for (let q in questiontos) {
+                    if (parseInt(q) === parseInt(questiontos[q])) r = true;// return true;
+                }
+                log(r);
+                return r
+                // return false;
+            };
+            let temp;
+            for (let player of this.players) {
+                questiontos.push(player.number);
+            }
+            do {
+                temp = questiontos;
+                questiontos = [];
+                while (temp.length > 0) {
+                    let r = common.num.random(temp.length);
+                    questiontos.push(temp.splice(r, 1)[0]);
+                }
+            } while (someoneAskSelf());
+            break;
+        }
     }
-    questiontos.push(questiontos.splice(0, 1)[0]);
     this.setQuestiontos(questiontos);
     this.setStage("ask");
 };
@@ -156,6 +197,7 @@ GameServer.prototype.serveJoin = function (request, ip) {
         host: this.host,
         stage: this.stage,
         round: this.round,
+        askorder: this.askorder,
         menumber
     };
 };
@@ -173,6 +215,7 @@ let GameClient = function (port, name = "Noname") {
         host: "",
         stage: "",
         round: -1,
+        askorder: "",
         questiontos: [],
         questionto: -1,
         joined: false,
@@ -207,6 +250,10 @@ let GameClient = function (port, name = "Noname") {
             }
             case "round": {
                 this.game.round = request.round;
+                break;
+            }
+            case "askorder": {
+                this.game.askorder = request.askorder;
                 break;
             }
             case "questiontos": {
@@ -255,6 +302,7 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
                 client.game.host = response.host;
                 client.game.stage = response.stage;
                 client.game.round = response.round;
+                client.game.askorder = response.askorder;
                 client.game.menumber = response.menumber;
                 client.game.joined = true;
                 onJoined();
@@ -273,6 +321,9 @@ GameClient.prototype.ask = function (question, link, image) {
 GameClient.prototype.controlServerNext = function () {
     if (!this.game.joined) return false;
     HTTP.post(HTTP.url(this.game.url, "control", { command: "next" }));
+};
+GameClient.prototype.controlServerAskorder = function () {
+    HTTP.post(HTTP.url(this.game.url, "control", { command: "askorder" }));
 };
 GameClient.prototype.updateNote = function (note) {
     let content = { note };
