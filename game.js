@@ -30,7 +30,7 @@ let GameServer = function (port, host) {
     this.stage = "wait";
     this.round = -1;
     this.askorder = "+1";
-    this.questiontos = [];
+    this.asktos = [];
 
     let server = express();
     server.use(bodyParser.text());
@@ -103,9 +103,9 @@ GameServer.prototype.setAskorder = function (askorder) {
     this.askorder = askorder;
     this.broadcast({ askorder }, "update", { target: "askorder" });
 };
-GameServer.prototype.setQuestiontos = function (questiontos) {
-    this.questiontos = questiontos;
-    this.broadcast({ questiontos }, "update", { target: "questiontos" });
+GameServer.prototype.setAsktos = function (asktos) {
+    this.asktos = asktos;
+    this.broadcast({ asktos }, "update", { target: "asktos" });
 };
 GameServer.prototype.stageStart = function () {
     this.setStage("start");
@@ -116,21 +116,21 @@ GameServer.prototype.stageAsk = function () {
     // for (let player of this.players) {
     //     this.asked.push(false);
     // }
-    let questiontos = [];
+    let asktos = [];
     switch (this.askorder) {
         case "+1": {
             for (let player of this.players) {
-                questiontos.push(player.number);
+                asktos.push(player.number);
             }
-            questiontos.push(questiontos.splice(0, 1)[0]);
+            asktos.push(asktos.splice(0, 1)[0]);
             break;
         }
         case "random": {
             let someoneAskSelf = () => {
                 let r = false;
-                log(questiontos)
-                for (let q in questiontos) {
-                    if (parseInt(q) === parseInt(questiontos[q])) r = true;// return true;
+                log(asktos)
+                for (let q in asktos) {
+                    if (parseInt(q) === parseInt(asktos[q])) r = true;// return true;
                 }
                 log(r);
                 return r
@@ -138,20 +138,20 @@ GameServer.prototype.stageAsk = function () {
             };
             let temp;
             for (let player of this.players) {
-                questiontos.push(player.number);
+                asktos.push(player.number);
             }
             do {
-                temp = questiontos;
-                questiontos = [];
+                temp = asktos;
+                asktos = [];
                 while (temp.length > 0) {
                     let r = common.num.random(temp.length);
-                    questiontos.push(temp.splice(r, 1)[0]);
+                    asktos.push(temp.splice(r, 1)[0]);
                 }
             } while (someoneAskSelf());
             break;
         }
     }
-    this.setQuestiontos(questiontos);
+    this.setAsktos(asktos);
     this.setStage("ask");
 };
 GameServer.prototype.confirmAsked = function (number) {
@@ -216,8 +216,8 @@ let GameClient = function (port, name = "Noname") {
         stage: "",
         round: -1,
         askorder: "",
-        questiontos: [],
-        questionto: -1,
+        asktos: [],
+        askto: -1,
         joined: false,
         players: [],
         questions: []
@@ -256,8 +256,8 @@ let GameClient = function (port, name = "Noname") {
                 this.game.askorder = request.askorder;
                 break;
             }
-            case "questiontos": {
-                this.setQuestiontos(request.questiontos);
+            case "asktos": {
+                this.setAsktos(request.asktos);
                 break;
             }
             case "note": {
@@ -280,9 +280,9 @@ let GameClient = function (port, name = "Noname") {
     client.listen(port);
     this.client = client;
 };
-GameClient.prototype.setQuestiontos = function (questiontos) {
-    this.game.questiontos = questiontos;
-    this.game.questionto = this.game.questiontos[this.game.menumber];
+GameClient.prototype.setAsktos = function (asktos) {
+    this.game.asktos = asktos;
+    this.game.askto = this.game.asktos[this.game.menumber];
 };
 GameClient.prototype.setQuestion = function (number, question) {
     let q = this.game.questions[number];
@@ -311,7 +311,7 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
     });
 };
 GameClient.prototype.ask = function (question, link, image) {
-    let to = this.game.questionto;
+    let to = this.game.askto;
     for (let player of this.game.players) {
         if (player.number === to) continue;
         HTTP.post(HTTP.url(player.url, "ask"), { to, question, link, image });
