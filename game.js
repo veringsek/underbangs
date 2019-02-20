@@ -60,6 +60,10 @@ let GameServer = function (port, host) {
             }
             case "end": {
                 this.stageEnd();
+                break;
+            }
+            case "restart": {
+                this.stageStart();
             }
         }
         respond(res);
@@ -417,6 +421,10 @@ GameClient.prototype.controlServerNext = function () {
 GameClient.prototype.controlServerEnd = function () {
     if (!this.game.joined) return false;
     this.sendServer("control", { command: "end" });
+};
+GameClient.prototype.controlServerRestart = function () {
+    if (!this.game.joined) return false;
+    this.sendServer("control", { command: "restart" });
 };
 GameClient.prototype.updateNote = function (note) {
     let content = { note };
