@@ -11,6 +11,20 @@ body {
     color: white; 
     background: grey; 
 }
+::-webkit-scrollbar {
+    width: 4px; 
+    padding: 1px;
+    border-radius: 2px;
+}
+::-webkit-scrollbar-track {
+	background: white; 
+    border-radius: 2px;
+}
+::-webkit-scrollbar-thumb {
+    width: 4px;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.5); 
+}
 textarea, input {
     font-family: 'Cambria'; 
 }
