@@ -131,6 +131,7 @@ textarea:focus, input:focus{
     background: black; 
     color: white;
     cursor: pointer; 
+    user-select: none;
 }
 
 .stage__title {

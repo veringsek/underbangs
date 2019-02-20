@@ -76,7 +76,8 @@
                         </div>
                         <span class="btn" onclick="ask()">Ask!</span>
                     </div>
-                    <div v-if="game.stage === 'round'" class="flxc flxp-ccc">
+                    <div v-if="game.stage === 'round' && game.round > 0"
+                        class="flxc flxp-ccc">
                         <span class="lbl">Now, it's</span>
                         <div class="flxp-rcc">
                             <span class="player__number bandaid"
@@ -145,13 +146,11 @@
                                 onclick="openLink(this.title)"
                                 >{{Q(player.number).question}}</span>
                         </div>
-                        <span v-if="player.number === game.askto
-                            && !game.rankings.includes(player.number)"
-                            class="player__approve bandaid"
-                            title="Approve his answer"
-                            v-on:click="client.approve()">Approve</span>
                         <span v-if="game.rankings.includes(player.number)"
                             class="bandaid">Approved</span>
+                        <span v-else-if="player.number === game.askto"
+                            class="bandaid" title="Approve his answer"
+                            v-on:click="client.approve()">Approve</span>
                         <textarea class="flxc txt player__note" 
                             :readonly="player.number !== game.menumber"
                             onchange="vm.client.updateNote(this.value)"

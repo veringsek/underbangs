@@ -83,7 +83,10 @@ let GameServer = function (port, host) {
         if (this.tokens[asker] !== request.token) {
             return respond(res, { error: "no-permission" });
         }
+        log(this.rankings.concat(askto))
+        log(this.rankings)
         this.setRankings(this.rankings.concat(askto));
+        log(this.rankings)
         respond(res, { result: "approved" });
     })
     server.listen(this.port);
