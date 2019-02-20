@@ -72,6 +72,16 @@ let GameServer = function (port, host) {
         let request = parseRequest(req);
         this.confirmAsked(request.number);
         respond(res);
+    });
+    server.post("/approve", (req, res) => {
+        let request = parseRequest(req);
+        let askto = request.askto;
+        let asker = this.asktos.indexOf(askto);
+        if (this.tokens[asker] !== request.token) {
+            return respond(res, { error: "no-permission" });
+        }
+        this.setRankings(this.rankings.concat(askto));
+        respond(res);
     })
     server.listen(this.port);
     this.server = server;
@@ -123,8 +133,6 @@ GameServer.prototype.nextStage = function () {
             this.setStage("start");
             break;
         }
-        default:
-            this.stageWait();
     }
 };
 GameServer.prototype.stageWait = function () {
@@ -189,11 +197,12 @@ GameServer.prototype.confirmAsked = function (number) {
 GameServer.prototype.stageRound = function (round) {
     this.setRound(round);
     if (this.stage !== "round") {
-        this.setRankings([1, 0]);
+        this.setRankings([]);
         this.setStage("round");
     }
 };
 GameServer.prototype.stageEnd = function () {
+    this.setRound(-1);
     this.setRankings(this.rankings);
     this.setStage("end");
 };
@@ -354,6 +363,9 @@ GameClient.prototype.ask = function (question, link, image) {
         this.sendPlayer(player, "ask", {}, { to, question, link, image });
     }
     this.sendServer("ask", {}, { number: this.game.menumber });
+};
+GameClient.prototype.approve = function () {
+    this.sendServer("approve", {}, { askto: this.game.askto });
 };
 GameClient.prototype.controlServerAskorder = function () {
     this.sendServer("control", { command: "askorder" });

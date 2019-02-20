@@ -126,7 +126,8 @@
         <div id="divField" class="flxc flxp-css">
             <div v-if="spawned" id="divPlayers" class="flxc flxp_rstt">
                 <div v-for="player in game.players" class="player flxp-rcs"
-                    :class=" { me: player.number === game.menumber, askto: player.number === game.askto } ">
+                    :class=" { me: player.number === game.menumber, 
+                    askto: player.number === game.askto } ">
                     <span class="player__img" onclick="toggleBigImage(this)"
                         :style=" { 'background-image': `url(${Q(player.number).image})` } "
                         v-on:dblclick="theater.image = Q(player.number).image"></span>
@@ -143,6 +144,10 @@
                                 onclick="openLink(this.title)"
                                 >{{Q(player.number).question}}</span>
                         </div>
+                        <span v-if="player.number === game.askto"
+                            class="player__approve bandaid"
+                            title="Approve his answer"
+                            v-on:click="client.approve()">Approve</span>
                         <textarea class="flxc txt player__note" 
                             :readonly="player.number !== game.menumber"
                             onchange="vm.client.updateNote(this.value)"
