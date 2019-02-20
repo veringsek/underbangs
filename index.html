@@ -13,25 +13,28 @@
         <div id="divLoadingStage" class="flxp-ccs section">
             <div id="divClientPort" class="flxp-ccs loading-stage"
                 :class="{ focus: loadingStage === 'spawn-client' }">
+                <span class="lbl">Create profile</span>
                 <input type="text" id="txtClientName" class="txt txt-center"
                     ondblclick="this.value += 'k'//"
-                    value="Jack" />
+                    title="Your nickname" value="Nickname" />
                 <input type="text" id="txtClientPort" class="txt txt-center"
                     ondblclick="this.value = parseInt(this.value) - 1//"
-                    value="9487" />
+                    title="Client's port" value="9487" />
                 <span id="btnSpawn" class="btn flxc" 
                     onclick="spawnclient(txtClientPort.value, txtClientName.value)">
                     Spawn</span>
             </div>
             <div v-if="spawned" id="divWelcome" class="flxp-ccs loading-stage"
                 :class="{ focus: loadingStage === 'join-game' }">
+                <span class="lbl">Join game at</span>
                 <input type="text" id="txtJoinURL" class="txt txt-center"
-                    value="http://127.0.0.1:9488" />
+                    title="Server's url" value="http://127.0.0.1:9488" />
                 <span id="btnJoin" class="btn flxc" 
                     onclick="joingame(txtJoinURL.value)">
                     Join</span>
-                <span style="text-align: center">OR</span>
-                <input type="text" id="txtServerPort" class="txt txt-center" value="9488" />
+                <span class="lbl">Or host your game</span>
+                <input type="text" id="txtServerPort" class="txt txt-center"
+                    title="Server's port" value="9488" />
                 <span id="btnHost" class="btn flxc"
                     onclick="hostgame(txtServerPort.value)">
                     Host</span>
@@ -40,6 +43,13 @@
                 :class="{ focus: loadingStage === 'in-game' }">
                 <div class="flxc flxp-css">
                     <span class="stage__title" readonly>{{stage(game.stage)}}</span>
+                    <div v-if="game.stage === 'start'" class="flxp-css">
+                        <span class="lbl">Game settings</span>
+                        <div>
+                            <span class="lbl">Ask order</span>
+                            <span class="btn"></span>
+                        </div>
+                    </div>
                     <div v-if="game.stage === 'ask'" class="flxp-ccs">
                         <span class="lbl">You are asking </span>
                         <div>

@@ -73,6 +73,8 @@ textarea:focus, input:focus{
     padding: 3px; 
     font-size: 14pt; 
     word-break: break-all;
+    cursor: default;
+    user-select: none;
 }
 
 .section {

@@ -29,14 +29,15 @@ let GameServer = function (port, host) {
     this.players = [];
     this.stage = "wait";
     this.round = -1;
+    this.askorder = "+1";
     this.questiontos = [];
 
     let server = express();
     server.use(bodyParser.text());
     server.use(bodyParser.urlencoded({ extended: true }));
     server.post("/control", (req, res) => {
-        let request = parseRequest(req, {});
-        switch (request.command) {
+        let request = parseRequest(req);
+        switch (req.query.command) {
             case "next": {
                 switch (this.stage) {
                     case "wait": {
@@ -62,6 +63,9 @@ let GameServer = function (port, host) {
                 }
                 break;
             }
+            case "askorder": {
+                
+            }
         }
         respond(res);
     });
@@ -75,9 +79,6 @@ let GameServer = function (port, host) {
         this.confirmAsked(request.number);
         respond(res);
     })
-    server.all("/", (req, res) => {
-        // let ip = new IPAdress.Address6(req.ip).to4().address;
-    });
     server.listen(this.port);
     this.server = server;
 };
@@ -271,7 +272,7 @@ GameClient.prototype.ask = function (question, link, image) {
 };
 GameClient.prototype.controlServerNext = function () {
     if (!this.game.joined) return false;
-    HTTP.post(HTTP.url(this.game.url, "control"), { command: "next" });
+    HTTP.post(HTTP.url(this.game.url, "control", { command: "next" }));
 };
 GameClient.prototype.updateNote = function (note) {
     let content = { note };
