@@ -99,6 +99,10 @@ textarea:focus, input:focus{
     background-position: center; 
     background-size: contain;
 }
+.theater__web {
+    width: 90%;
+    height: 90%;
+}
 
 .loading-stage {
     display: none; 
@@ -177,6 +181,10 @@ textarea:focus, input:focus{
     cursor: pointer;
     font-size: 16pt;
     font-weight: bold;
+}
+
+#imgAskImagePreview {
+    margin: 15px;
 }
 
 #divPlayers {

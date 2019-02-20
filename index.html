@@ -14,10 +14,10 @@
             <div id="divClientPort" class="flxp-ccs loading-stage"
                 :class="{ focus: loadingStage === 'spawn-client' }">
                 <input type="text" id="txtClientName" class="txt txt-center"
-                    ondblclick="this.value += 'k'"
+                    ondblclick="this.value += 'k'//"
                     value="Jack" />
                 <input type="text" id="txtClientPort" class="txt txt-center"
-                    ondblclick="this.value = parseInt(this.value) - 1"
+                    ondblclick="this.value = parseInt(this.value) - 1//"
                     value="9487" />
                 <span id="btnSpawn" class="btn flxc" 
                     onclick="spawnclient(txtClientPort.value, txtClientName.value)">
@@ -65,24 +65,20 @@
                         <span class="btn" onclick="ask()">Ask!</span>
                     </div>
                     <div v-if="game.stage === 'round'" class="flxc flxp-ccc">
-                        <div class="flxp-rcc" style="justify-content: flex-start;">
-                            <span class="lbl">Now, it's</span>
-                        </div>
+                        <span class="lbl">Now, it's</span>
                         <div class="flxp-rcc">
                             <span class="player__number bandaid"
                                 >#{{game.round}}</span>
                             <span class="player__name flxc"
                                 >{{game.players[game.round].name}}</span>
                         </div>
-                        <div class="flxp-rcc" style="justify-content: flex-end;">
-                            <span class="lbl">'s turn!</span>
-                        </div>
+                        <span class="lbl">'s turn!</span>
                         <span class="player__img"
                             :style=" { 'background-image': `url(${Q(game.round).image})` } "
                             v-on:click="theater.image = Q(game.round).image"></span>
                         <span class="player__question lbl"
                             :title="Q(game.round).link"
-                            onclick="openLinkInBrowser(this.title)"
+                            onclick="openLink(this.title)"
                             >{{Q(game.round).question}}</span>
                         <textarea class="flxc txt player__note" readonly
                             :value="Q(game.round).note"></textarea>
@@ -114,7 +110,7 @@
                         <div v-if="player.number !== game.menumber" class="flxp-rsc">
                             <span class="player__question lbl"
                                 :title="Q(player.number).link"
-                                onclick="openLinkInBrowser(this.title)"
+                                onclick="openLink(this.title)"
                                 >{{Q(player.number).question}}</span>
                         </div>
                         <textarea class="flxc txt player__note" 
@@ -128,10 +124,18 @@
                 </div>
             </div>
         </div>
-        <div v-if="!theaterEmpty" id="divTheater" class="theater flxp-ccc">
+        <div v-if="!theaterEmpty" id="divTheater" class="theater flxp-ccc"
+            v-on:click="theaterClear()">
             <span v-if="theater.image" class="theater__img"
                 :style=" { 'background-image': `url(${theater.image})` } "
                 v-on:click="theater.image = ''"></span>
+            <div v-if="theater.web" class="theater__web flxp-css">
+                <iframe :src="theater.web" class="flxc theater__web__iframe"></iframe>
+                <div class="flxp-rcs">
+                    <span class="btn" v-on:click="openLinkExternal(theater.web)"
+                        >Open in browser</span>
+                </div>
+            </div>
         </div>
     </div>
 </body>

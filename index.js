@@ -23,7 +23,13 @@ let init = function () {
                 return vm.game.questions[number];
             },
             theater: {
-                image: null
+                image: null, 
+                web: null
+            },
+            theaterClear: function () {
+                for (let key in vm.theater) {
+                    vm.theater[key] = null;
+                }
             }
         },
         computed: {
@@ -42,9 +48,9 @@ let init = function () {
             },
             theaterEmpty: function () {
                 for (let key in this.theater) {
-                    if (!this.theater[key]) return true;
+                    if (this.theater[key]) return false;
                 }
-                return false;
+                return true;
             }
         }
     });
@@ -86,11 +92,16 @@ let setBGI = (element, url = "") => {
 let ask = () => {
     vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value);
 };
-let openLinkInBrowser = (url) => {
+let openLink = (url) => {
+    if (isURL(url)) {
+        vm.theater.web = url;
+    }
+};
+let openLinkExternal = (url) => {
     if (isURL(url)) {
         shell.openExternal(url);
     }
-};
+}
 let toggleBigImage = (element) => {
     if (element.style.backgroundSize === "contain") {
         element.style.backgroundSize = "cover";
