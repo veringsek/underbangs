@@ -300,6 +300,10 @@ GameClient.prototype.sendServer = function (path, params, content = {}, listener
     let url = HTTP.url(this.game.url, path, params);
     return this.send(url, content, listener);
 };
+GameClient.prototype.sendPlayer = function (player, path, params, content, listener) {
+    let url = HTTP.url(player.url, path, params);
+    return this.send(url, content, listener);
+};
 GameClient.prototype.setAsktos = function (asktos) {
     this.game.asktos = asktos;
     this.game.askto = this.game.asktos[this.game.menumber];
@@ -334,7 +338,7 @@ GameClient.prototype.ask = function (question, link, image) {
     let to = this.game.askto;
     for (let player of this.game.players) {
         if (player.number === to) continue;
-        this.send(HTTP.url(player.url, "ask"), { to, question, link, image });
+        this.sendPlayer(player, "ask", {}, { to, question, link, image });
     }
     this.sendServer("ask", {}, { number: this.game.menumber });
 };
@@ -349,9 +353,9 @@ GameClient.prototype.updateNote = function (note) {
     let content = { note };
     for (let player of this.game.players) {
         if (player.number === this.game.menumber) continue;
-        this.send(HTTP.url(player.url, "update", {
+        this.sendPlayer(player, "update", {
             target: "note", playernumber: this.game.menumber
-        }), content);
+        }, content);
     }
 };
 exports.GameClient = GameClient;
