@@ -50,6 +50,10 @@ let init = function () {
                 if (!this.spawned) return false;
                 return this.game.round === this.game.menumber;
             },
+            meapproved: function () {
+                if (!this.spawned) return false;
+                return this.game.rankings.includes(this.game.menumber);
+            }, 
             theaterEmpty: function () {
                 for (let key in this.theater) {
                     if (this.theater[key]) return false;

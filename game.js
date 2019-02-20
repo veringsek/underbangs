@@ -76,12 +76,15 @@ let GameServer = function (port, host) {
     server.post("/approve", (req, res) => {
         let request = parseRequest(req);
         let askto = request.askto;
+        if (this.rankings.includes(askto)) {
+            return respond(res, { error: "approved-already" });
+        }
         let asker = this.asktos.indexOf(askto);
         if (this.tokens[asker] !== request.token) {
             return respond(res, { error: "no-permission" });
         }
         this.setRankings(this.rankings.concat(askto));
-        respond(res);
+        respond(res, { result: "approved" });
     })
     server.listen(this.port);
     this.server = server;
@@ -365,7 +368,22 @@ GameClient.prototype.ask = function (question, link, image) {
     this.sendServer("ask", {}, { number: this.game.menumber });
 };
 GameClient.prototype.approve = function () {
-    this.sendServer("approve", {}, { askto: this.game.askto });
+    let client = this;
+    this.sendServer("approve", {}, { askto: this.game.askto }, function () {
+        if (HTTP.ready(this)) {
+            let response = common.json.parse(this.responseText, {});
+            if (response.result === "approved") {
+                let askto = client.game.askto;
+                let question = client.game.questions[askto];
+                client.sendPlayer(client.game.players[askto], "ask", {}, {
+                    to: askto, 
+                    question: question.question, 
+                    link: question.link, 
+                    image: question.image
+                });
+            }
+        }
+    });
 };
 GameClient.prototype.controlServerAskorder = function () {
     this.sendServer("control", { command: "askorder" });

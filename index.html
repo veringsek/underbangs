@@ -138,16 +138,20 @@
                                 #{{player.number}}</span>
                             <span class="player__name flxc">{{player.name}}</span>
                         </div>
-                        <div v-if="player.number !== game.menumber" class="flxp-rsc">
+                        <div v-if="player.number !== game.menumber || meapproved"
+                            class="flxp-rsc">
                             <span class="player__question lbl"
                                 :title="Q(player.number).link"
                                 onclick="openLink(this.title)"
                                 >{{Q(player.number).question}}</span>
                         </div>
-                        <span v-if="player.number === game.askto"
+                        <span v-if="player.number === game.askto
+                            && !game.rankings.includes(player.number)"
                             class="player__approve bandaid"
                             title="Approve his answer"
                             v-on:click="client.approve()">Approve</span>
+                        <span v-if="game.rankings.includes(player.number)"
+                            class="bandaid">Approved</span>
                         <textarea class="flxc txt player__note" 
                             :readonly="player.number !== game.menumber"
                             onchange="vm.client.updateNote(this.value)"
