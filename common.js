@@ -22,8 +22,6 @@ http.post = function (url, content, listener) {
     xhttp.onreadystatechange = listener;
     xhttp.open("POST", url, true);
     xhttp.send(content);
-    log(url);
-    log(content);
 };
 http.head = function (ip, port, protocol = "http") {
     let m = ip.includes("://") ? "" : `${protocol}://`;

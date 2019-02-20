@@ -82,12 +82,8 @@
                             :title="questionOf(client.game.round).link"
                             onclick="openLinkInBrowser(this.title)"
                             >{{questionOf(client.game.round).question}}</span>
-                        <textarea class="flxc txt player__note"
-                            :readonly="client.game.round !== client.game.menumber"
-                            :value="client.game.questions[client.game.round].note"
-                            v-model="client.game.questions[client.game.round].note"
-                            onchange="vm.client.updateNote(this.value)"
-                            placeholder="You can take some note here. "></textarea>
+                        <textarea class="flxc txt player__note" readonly
+                            :value="questionOf(client.game.round).note"></textarea>
                     </div>
                 </div>
                 <div v-if="ishost" id="divHostControls" class="flxp-rcc">
@@ -100,7 +96,12 @@
         </div>
         <div id="divField" class="flxc flxp-ccs">
             <div v-if="spawned" id="divPlayers" class="flxc">
-                <div v-for="player in client.game.players" class="player flxp-rcs">
+                <div v-for="player in client.game.players" class="player flxp-rcs"
+                    :class=" { me: player.number === client.game.menumber } ">
+                    <span class="player__img"
+                        :style=" { 'background-image': `url(${questionOf(player.number).image})` } "
+                        onclick="toggleBigImage(this)"
+                        v-on:dblclick="theater.image = questionOf(player.number).image"></span>
                     <div class="flxc flxp-ccs">
                         <div class="flxp-rsc">
                             <span class="player__number bandaid"
@@ -117,18 +118,13 @@
                                 >{{questionOf(player.number).question}}</span>
                         </div>
                         <textarea class="flxc txt player__note" 
-                            :readonly="player.url !== client.me.url"
+                            :readonly="player.number !== client.game.menumber"
                             onchange="vm.client.updateNote(this.value)"
-                            placeholder="You can take some note here. "
+                            title="You can take some note here. "
                             :value="client.game.questions[player.number].note"
                             v-model="client.game.questions[player.number].note"
                             ></textarea>
                     </div>
-                    <span class="player__img"
-                        :style=" { 'background-image': `url(${questionOf(player.number).image})` } "
-                        onclick="toggleBigImage(this)"
-                        v-on:dblclick="theater.image = questionOf(player.number).image">
-                    </span>
                 </div>
             </div>
         </div>

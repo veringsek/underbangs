@@ -66,11 +66,8 @@ let GameServer = function (port, host) {
         respond(res);
     });
     server.post("/join", (req, res) => {
-        log("KKK")
-        log(req.ip)
         let request = parseRequest(req);
         let ip = new IPAddress.Address6(req.ip).to4().address;
-        log(ip)
         respond(res, this.serveJoin(request, ip));
     });
     server.post("/ask", (req, res) => {
@@ -147,9 +144,7 @@ GameServer.prototype.addPlayer = function (player) {
 };
 GameServer.prototype.serveJoin = function (request, ip) {
     let player = request.player;
-    log(player.url);
     player.url = HTTP.head(ip, player.port);
-    log(player.url);
     let menumber = this.addPlayer(request.player);
     if (menumber < 0) {
         return { result: "rejected" };
