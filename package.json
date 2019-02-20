@@ -8,6 +8,6 @@
         "ip-address": "^5.8.9"
     },
     "scripts": {
-        "package": "electron-packager . Underbangs --platform=win32 --arch=ia32 --electron-version=2.0.3 --asar=true --ignore=node_modules/electron-*"
+        "package": "electron-packager . Underbangs --platform=win32 --arch=x64 --electron-version=2.0.3 --asar=true --ignore=node_modules/electron-*"
     }
 }

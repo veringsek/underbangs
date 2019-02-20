@@ -66,8 +66,12 @@ let GameServer = function (port, host) {
         respond(res);
     });
     server.post("/join", (req, res) => {
+        log("KKK")
+        log(req.ip)
         let request = parseRequest(req);
-        respond(res, this.serveJoin(request));
+        let ip = new IPAddress.Address6(req.ip).to4().address;
+        log(ip)
+        respond(res, this.serveJoin(request, ip));
     });
     server.post("/ask", (req, res) => {
         let request = parseRequest(req);
@@ -141,7 +145,11 @@ GameServer.prototype.addPlayer = function (player) {
     this.broadcast({ players: this.players }, "update", { target: "players" });
     return player.number;
 };
-GameServer.prototype.serveJoin = function (request) {
+GameServer.prototype.serveJoin = function (request, ip) {
+    let player = request.player;
+    log(player.url);
+    player.url = HTTP.head(ip, player.port);
+    log(player.url);
     let menumber = this.addPlayer(request.player);
     if (menumber < 0) {
         return { result: "rejected" };
@@ -163,7 +171,7 @@ exports.GameServer = GameServer;
  * @param {string} name player's name
  */
 let GameClient = function (port, name = "Noname") {
-    this.me = { url: HTTP.head(DEVICE_IP, port), name };
+    this.me = { url: HTTP.head(DEVICE_IP, port), port, name };
     this.game = {
         url: "",
         host: "",
