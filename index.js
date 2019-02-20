@@ -18,10 +18,10 @@ let init = function () {
         el: "#ribody",
         data: {
             loadingStage: "spawn-client",
-            client: undefined, 
+            client: undefined,
             questionOf: function (number) {
                 return vm.client.game.questions[number];
-            }, 
+            },
             theater: {
                 image: null
             }
@@ -70,7 +70,7 @@ let stage = (code) => {
             return "Ask";
         case "round":
             return "Guess It!";
-        case "end": 
+        case "end":
             return "Game Over";
         default:
             return code;
@@ -83,13 +83,23 @@ let ask = () => {
     vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value);
 };
 let openLinkInBrowser = (url) => {
-    log(url);
-    shell.openExternal(url);
+    if (isURL(url)) {
+        shell.openExternal(url);
+    }
 };
 let toggleBigImage = (element) => {
     if (element.style.backgroundSize === "contain") {
-        element.style.backgroundSize = "cover"; 
+        element.style.backgroundSize = "cover";
     } else {
         element.style.backgroundSize = "contain";
     }
 };
+let isURL = (str) => {
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    return pattern.test(str);
+}
