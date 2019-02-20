@@ -34,7 +34,7 @@ let init = function () {
                 return this.spawned && this.client.game.joined;
             },
             ishost: function () {
-                return this.ingame && this.client.game.host === this.client.me.url;
+                return this.ingame && this.client.game.host === this.client.game.menumber; //this.client.game.host === this.client.me.url;
             },
             theaterEmpty: function () {
                 for (let key in this.theater) {
@@ -51,7 +51,7 @@ let spawnclient = (port = PORT_CLIENT, name) => {
     vm.loadingStage = "join-game";
 };
 let hostgame = (port = PORT_SERVER) => {
-    gameserver = new GameServer(port, gameclient.me.url);
+    gameserver = new GameServer(port, 0); //gameclient.me.url);
     joingame(gameserver.url);
 };
 let joingame = (url) => {
