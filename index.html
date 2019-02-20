@@ -126,9 +126,16 @@
                     </div>
                     <span class="player__img"
                         :style=" { 'background-image': `url(${questionOf(player.number).image})` } "
-                        onclick="toggleBigImage(this)"></span>
+                        onclick="toggleBigImage(this)"
+                        v-on:dblclick="theater.image = questionOf(player.number).image">
+                    </span>
                 </div>
             </div>
+        </div>
+        <div v-if="!theaterEmpty" id="divTheater" class="theater flxp-ccc">
+            <span v-if="theater.image" class="theater__img"
+                :style=" { 'background-image': `url(${theater.image})` } "
+                v-on:click="theater.image = ''"></span>
         </div>
     </div>
 </body>

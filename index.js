@@ -21,6 +21,9 @@ let init = function () {
             client: undefined, 
             questionOf: function (number) {
                 return vm.client.game.questions[number];
+            }, 
+            theater: {
+                image: null
             }
         },
         computed: {
@@ -32,6 +35,12 @@ let init = function () {
             },
             ishost: function () {
                 return this.ingame && this.client.game.host === this.client.me.url;
+            },
+            theaterEmpty: function () {
+                for (let key in this.theater) {
+                    if (!this.theater[key]) return true;
+                }
+                return false;
             }
         }
     });
