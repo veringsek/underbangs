@@ -16,6 +16,12 @@ let parseRequest = function (req, init = {}) {
 let respond = function (res, content = {}) {
     res.send(JSON.stringify(content));
 };
+let IPv4 = function (string) {
+    return new IPAddress.Address6(string).to4().address;
+};
+let sameIP = function (a, b) {
+
+};
 
 /**
  * GameServer
@@ -37,6 +43,10 @@ let GameServer = function (port, host) {
     server.use(bodyParser.urlencoded({ extended: true }));
     server.post("/control", (req, res) => {
         let request = parseRequest(req);
+        let ip = IPv4(req.ip);
+        if (ip !== this.players[this.host].ip) {
+            respond(res, { error: "no-permission" });
+        }
         switch (req.query.command) {
             case "next": {
                 switch (this.stage) {
@@ -75,7 +85,7 @@ let GameServer = function (port, host) {
     });
     server.post("/join", (req, res) => {
         let request = parseRequest(req);
-        let ip = new IPAddress.Address6(req.ip).to4().address;
+        let ip = IPv4(req.ip);
         respond(res, this.serveJoin(request, ip));
     });
     server.post("/ask", (req, res) => {
@@ -186,8 +196,9 @@ GameServer.prototype.addPlayer = function (player) {
 };
 GameServer.prototype.serveJoin = function (request, ip) {
     let player = request.player;
-    player.url = HTTP.head(ip, player.port);
-    let menumber = this.addPlayer(request.player);
+    player.ip = ip;
+    player.url = HTTP.head(player.ip, player.port);
+    let menumber = this.addPlayer(player);
     if (menumber < 0) {
         return { result: "rejected" };
     }
