@@ -33,6 +33,7 @@ let GameServer = function (port, host) {
     this.url = HTTP.head(DEVICE_IP, this.port);
     this.host = host;
     this.players = [];
+    this.tokens = [];
     this.stage = "wait";
     this.round = -1;
     this.askorder = "+1";
@@ -43,9 +44,10 @@ let GameServer = function (port, host) {
     server.use(bodyParser.urlencoded({ extended: true }));
     server.post("/control", (req, res) => {
         let request = parseRequest(req);
-        let ip = IPv4(req.ip);
-        if (ip !== this.players[this.host].ip) {
-            respond(res, { error: "no-permission" });
+        // let ip = IPv4(req.ip);
+        // if (ip !== this.players[this.host].ip) {
+        if (request.token !== this.tokens[this.host]) {
+            return respond(res, { error: "no-permission" });
         }
         switch (req.query.command) {
             case "next": {
@@ -189,6 +191,7 @@ GameServer.prototype.addPlayer = function (player) {
             return -1;// or rejoin?
         }
     }
+    this.tokens.push(common.num.random(1000, 9999));
     player.number = this.players.length;
     this.players.push(player);
     this.broadcast({ players: this.players }, "update", { target: "players" });
@@ -203,6 +206,7 @@ GameServer.prototype.serveJoin = function (request, ip) {
         return { result: "rejected" };
     }
     return {
+        token: this.tokens[menumber],
         result: "joined",
         url: this.url,
         host: this.host,
@@ -292,6 +296,16 @@ let GameClient = function (port, name = "Noname") {
     client.listen(port);
     this.client = client;
 };
+GameClient.prototype.setAsktos = function (asktos) {
+    this.game.asktos = asktos;
+    this.game.askto = this.game.asktos[this.game.menumber];
+};
+GameClient.prototype.setQuestion = function (number, question) {
+    let q = this.game.questions[number];
+    q.question = question.question;
+    q.link = question.link;
+    q.image = question.image;
+};
 GameClient.prototype.send = function (url, content, listener) {
     return HTTP.post(url, content, listener);
 };
@@ -304,16 +318,6 @@ GameClient.prototype.sendPlayer = function (player, path, params, content, liste
     let url = HTTP.url(player.url, path, params);
     return this.send(url, content, listener);
 };
-GameClient.prototype.setAsktos = function (asktos) {
-    this.game.asktos = asktos;
-    this.game.askto = this.game.asktos[this.game.menumber];
-};
-GameClient.prototype.setQuestion = function (number, question) {
-    let q = this.game.questions[number];
-    q.question = question.question;
-    q.link = question.link;
-    q.image = question.image;
-};
 GameClient.prototype.join = function (url, onJoined = () => null, onRejected = () => null) {
     let client = this;
     this.send(HTTP.url(url, "join"), { player: this.me }, function () {
@@ -322,6 +326,7 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
             if (response.result === "rejected") {
                 onRejected();
             } else if (response.result === "joined") {
+                client.game.token = response.token;
                 client.game.url = response.url;
                 client.game.host = response.host;
                 client.game.stage = response.stage;
