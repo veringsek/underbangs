@@ -23,8 +23,12 @@ let init = function () {
                 return vm.game.questions[number];
             },
             theater: {
+                dialog: null,
                 image: null,
                 web: null
+            },
+            theaterDialog: {
+                onYes: () => console.log('kkk')
             },
             theaterClear: function () {
                 for (let key in vm.theater) {

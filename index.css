@@ -99,6 +99,14 @@ textarea:focus, input:focus{
     background: rgba(0, 0, 0, 0);
     transition: 0.5s;
 }
+.theater__dialog {
+    margin: 10px; 
+    padding: 10px; 
+    border-radius: 5px; 
+    border: 2px solid black; 
+    box-shadow: 0px 0px 15px black; 
+    background: white;
+}
 .theater__img {
     width: 80%;
     height: 80%;

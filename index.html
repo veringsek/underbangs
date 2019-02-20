@@ -165,10 +165,17 @@
         </div>
         <div v-if="!theaterEmpty" id="divTheater" class="theater flxp-ccc"
             v-on:click="theaterClear()">
-            <span v-if="theater.image" class="theater__img"
+            <div v-if="theater.dialog" class="theater__dialog flxp-css">
+                <span class="lbl">{{theater.dialog.msg}}</span>
+                <div class="flxp-rsc">
+                    <span class="btn" v-on:click="theaterDialog.onYes()">Yes</span>
+                    <span class="btn" v-on:click="theaterDialog.onNo()">No</span>
+                </div>
+            </div>
+            <span v-else-if="theater.image" class="theater__img"
                 :style=" { 'background-image': `url(${theater.image})` } "
                 v-on:click="theater.image = ''"></span>
-            <div v-if="theater.web" class="theater__web flxp-css">
+            <div v-else-if="theater.web" class="theater__web flxp-css">
                 <iframe :src="theater.web" class="flxc theater__web__iframe"></iframe>
                 <div class="flxp-rcs">
                     <span class="btn" v-on:click="openLinkExternal(theater.web)"
