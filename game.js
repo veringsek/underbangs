@@ -92,6 +92,12 @@ let GameServer = function (port, host) {
     server.listen(this.port);
     this.server = server;
 };
+GameServer.prototype.send = function (url, content, listener) {
+    HTTP.post(url, content, listener);
+};
+GameServer.prototype.sendPlayer = function (player, path, params, content, listener) {
+    this.send(HTTP.url(player.url, path, params), content, listener);
+};
 GameServer.prototype.broadcast = function (content = "", path = [], params = {}) {
     for (let player of this.players) {
         HTTP.post(HTTP.url(player.url, path, params), content);
@@ -136,7 +142,7 @@ GameServer.prototype.nextStage = function () {
             break;
         }
         case "end": {
-            this.setStage("start");
+            this.stageStart("start");
             break;
         }
     }
@@ -145,6 +151,19 @@ GameServer.prototype.stageWait = function () {
     this.setStage("wait");
 };
 GameServer.prototype.stageStart = function () {
+    this.setRound(-1);
+    this.setAsktos([]);
+    this.setRankings([]);
+    for (let toplayer of this.players) {
+        for (let player of this.players) {
+            this.sendPlayer(player, "ask", {}, {
+                to: toplayer.number, 
+                question: "???", 
+                link: "", 
+                image: ""
+            });
+        }
+    }
     this.setStage("start");
 };
 GameServer.prototype.stageAsk = function () {
@@ -379,9 +398,9 @@ GameClient.prototype.approve = function () {
                 let askto = client.game.askto;
                 let question = client.game.questions[askto];
                 client.sendPlayer(client.game.players[askto], "ask", {}, {
-                    to: askto, 
-                    question: question.question, 
-                    link: question.link, 
+                    to: askto,
+                    question: question.question,
+                    link: question.link,
                     image: question.image
                 });
             }
