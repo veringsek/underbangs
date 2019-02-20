@@ -19,22 +19,26 @@ let init = function () {
         data: {
             loadingStage: "spawn-client",
             client: undefined,
-            questionOf: function (number) {
-                return vm.client.game.questions[number];
+            Q: function (number) {
+                return vm.game.questions[number];
             },
             theater: {
                 image: null
             }
         },
         computed: {
+            game: function () {
+                if (!this.client) return undefined;
+                return this.client.game;
+            },
             spawned: function () {
                 return this.client instanceof GameClient;
             },
             ingame: function () {
-                return this.spawned && this.client.game.joined;
+                return this.spawned && this.game.joined;
             },
             ishost: function () {
-                return this.ingame && this.client.game.host === this.client.game.menumber; //this.client.game.host === this.client.me.url;
+                return this.ingame && this.game.host === this.game.menumber;
             },
             theaterEmpty: function () {
                 for (let key in this.theater) {
