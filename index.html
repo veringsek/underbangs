@@ -95,11 +95,30 @@
                         <textarea class="flxc txt player__note" readonly
                             :value="Q(game.round).note"></textarea>
                     </div>
+                    <div v-if="game.stage === 'end'" class="flxc">
+                        <div v-for="(number, n) in game.rankings" class="player"
+                            :class=" { me: number === game.menumber } ">
+                            <div class="flxp-rsc">
+                                <span class="player__number bandaid"
+                                    >#{{number}}</span>
+                                <span class="player__name flxc"
+                                    >{{game.players[number].name}}</span>
+                            </div>
+                            <div class="flxp-rsc">
+                                <span class="bandaid">{{n}}</span>
+                                <span class="player__question lbl"
+                                    :title="Q(number).link"
+                                    onclick="openLink(this.title)"
+                                    >{{Q(number).question}}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div v-if="ishost" id="divHostControls" class="flxp-rcc">
                     <span id="btnGameRoundNext" class="btn flxc"
                         v-on:click="client.controlServerNext()">Next</span>
-                    <span id="btnGameRoundEnd" class="btn flxc">End</span>
+                    <span id="btnGameRoundEnd" class="btn flxc"
+                        v-on:click="client.controlServerEnd()">End</span>
                     <span id="btnGameRoundRestart" class="btn flxc">Restart</span>
                 </div>
             </div>
@@ -107,7 +126,7 @@
         <div id="divField" class="flxc flxp-css">
             <div v-if="spawned" id="divPlayers" class="flxc flxp_rstt">
                 <div v-for="player in game.players" class="player flxp-rcs"
-                    :class=" { me: player.number === game.menumber } ">
+                    :class=" { me: player.number === game.menumber, askto: player.number === game.askto } ">
                     <span class="player__img" onclick="toggleBigImage(this)"
                         :style=" { 'background-image': `url(${Q(player.number).image})` } "
                         v-on:dblclick="theater.image = Q(player.number).image"></span>

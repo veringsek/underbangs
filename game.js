@@ -37,6 +37,7 @@ let GameServer = function (port, host) {
     this.round = -1;
     this.askorder = "random";
     this.asktos = [];
+    this.rankings = [];
 
     let server = express();
     server.use(bodyParser.text());
@@ -47,15 +48,18 @@ let GameServer = function (port, host) {
             return respond(res, { error: "no-permission" });
         }
         switch (req.query.command) {
-            case "next": {
-                this.nextStage();
-                break;
-            }
             case "askorder": {
                 let orders = ["+1", "random"];
                 let o = common.num.track(orders.indexOf(this.askorder) + 1, orders.length);
                 this.setAskorder(orders[o]);
                 break;
+            }
+            case "next": {
+                this.nextStage();
+                break;
+            }
+            case "end": {
+                this.stageEnd();
             }
         }
         respond(res);
@@ -92,6 +96,10 @@ GameServer.prototype.setAskorder = function (askorder) {
 GameServer.prototype.setAsktos = function (asktos) {
     this.asktos = asktos;
     this.broadcast({ asktos }, "update", { target: "asktos" });
+};
+GameServer.prototype.setRankings = function (rankings) {
+    this.rankings = rankings;
+    this.broadcast({ rankings }, "update", { target: "rankings" });
 };
 GameServer.prototype.nextStage = function () {
     switch (this.stage) {
@@ -181,8 +189,13 @@ GameServer.prototype.confirmAsked = function (number) {
 GameServer.prototype.stageRound = function (round) {
     this.setRound(round);
     if (this.stage !== "round") {
+        this.setRankings([1, 0]);
         this.setStage("round");
     }
+};
+GameServer.prototype.stageEnd = function () {
+    this.setRankings(this.rankings);
+    this.setStage("end");
 };
 GameServer.prototype.addPlayer = function (player) {
     for (let any of this.players) {
@@ -227,6 +240,7 @@ let GameClient = function (port, name = "Noname") {
         askorder: "",
         asktos: [],
         askto: -1,
+        rankings: [],
         joined: false,
         players: [],
         questions: []
@@ -269,6 +283,10 @@ let GameClient = function (port, name = "Noname") {
                 this.setAsktos(request.asktos);
                 break;
             }
+            case "rankings": {
+                this.setRankings(request.rankings);
+                break;
+            }
             case "note": {
                 let question = this.game.questions[req.query.playernumber];
                 question.note = request.note;
@@ -292,6 +310,9 @@ let GameClient = function (port, name = "Noname") {
 GameClient.prototype.setAsktos = function (asktos) {
     this.game.asktos = asktos;
     this.game.askto = this.game.asktos[this.game.menumber];
+};
+GameClient.prototype.setRankings = function (rankings) {
+    this.game.rankings = rankings;
 };
 GameClient.prototype.setQuestion = function (number, question) {
     let q = this.game.questions[number];
@@ -334,12 +355,16 @@ GameClient.prototype.ask = function (question, link, image) {
     }
     this.sendServer("ask", {}, { number: this.game.menumber });
 };
+GameClient.prototype.controlServerAskorder = function () {
+    this.sendServer("control", { command: "askorder" });
+};
 GameClient.prototype.controlServerNext = function () {
     if (!this.game.joined) return false;
     this.sendServer("control", { command: "next" });
 };
-GameClient.prototype.controlServerAskorder = function () {
-    this.sendServer("control", { command: "askorder" });
+GameClient.prototype.controlServerEnd = function () {
+    if (!this.game.joined) return false;
+    this.sendServer("control", { command: "end" });
 };
 GameClient.prototype.updateNote = function (note) {
     let content = { note };
