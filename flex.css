@@ -54,6 +54,14 @@
     align-items: center;
     flex-wrap: nowrap; 
 }
+.flxp_rstt {
+    display: flex; 
+    flex-direction: row;
+    justify-content: stretch; 
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap; 
+}
 
 .flxc, .flxc-1 {
     flex: 1; 

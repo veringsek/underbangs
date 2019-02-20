@@ -104,8 +104,8 @@
                 </div>
             </div>
         </div>
-        <div id="divField" class="flxc flxp-ccs">
-            <div v-if="spawned" id="divPlayers" class="flxc">
+        <div id="divField" class="flxc flxp-css">
+            <div v-if="spawned" id="divPlayers" class="flxc flxp_rstt">
                 <div v-for="player in game.players" class="player flxp-rcs"
                     :class=" { me: player.number === game.menumber } ">
                     <span class="player__img" onclick="toggleBigImage(this)"
@@ -115,8 +115,7 @@
                         <div class="flxp-rsc">
                             <span class="player__number bandaid"
                                 :title="`Player No.${player.number}`">
-                                #{{player.number}}
-                            </span>
+                                #{{player.number}}</span>
                             <span class="player__name flxc">{{player.name}}</span>
                         </div>
                         <div v-if="player.number !== game.menumber" class="flxp-rsc">

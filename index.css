@@ -190,5 +190,6 @@ textarea:focus, input:focus{
 }
 
 #divPlayers {
-    padding: 20px; 
+    padding: 10px; 
+    overflow-y: scroll;
 }
