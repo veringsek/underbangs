@@ -7,7 +7,6 @@ const IPAddress = require("ip-address");
 const DEVICE_IP = IP.address();
 const express = require("express");
 const bodyParser = require("body-parser");
-const crypto = require("crypto");
 
 // Imports
 const { common } = require("./common.js");
@@ -44,8 +43,6 @@ let GameServer = function (port, host) {
     server.use(bodyParser.urlencoded({ extended: true }));
     server.post("/control", (req, res) => {
         let request = parseRequest(req);
-        // let ip = IPv4(req.ip);
-        // if (ip !== this.players[this.host].ip) {
         if (request.token !== this.tokens[this.host]) {
             return respond(res, { error: "no-permission" });
         }
@@ -205,15 +202,20 @@ GameServer.prototype.serveJoin = function (request, ip) {
     if (menumber < 0) {
         return { result: "rejected" };
     }
+    let game = common.json.transcribe({ token: this.tokens[menumber], menumber }, this, [
+        "url", "host", "stage", "round", "askorder"
+    ]);
     return {
-        token: this.tokens[menumber],
-        result: "joined",
-        url: this.url,
-        host: this.host,
-        stage: this.stage,
-        round: this.round,
-        askorder: this.askorder,
-        menumber
+        result: "joined", game
+        // game: {
+        //     token: this.tokens[menumber],
+        //     url: this.url,
+        //     host: this.host,
+        //     stage: this.stage,
+        //     round: this.round,
+        //     askorder: this.askorder,
+        //     menumber
+        // }
     };
 };
 exports.GameServer = GameServer;
@@ -326,13 +328,14 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
             if (response.result === "rejected") {
                 onRejected();
             } else if (response.result === "joined") {
-                client.game.token = response.token;
-                client.game.url = response.url;
-                client.game.host = response.host;
-                client.game.stage = response.stage;
-                client.game.round = response.round;
-                client.game.askorder = response.askorder;
-                client.game.menumber = response.menumber;
+                common.json.transcribe(client.game, response.game);
+                // client.game.token = response.token;
+                // client.game.url = response.url;
+                // client.game.host = response.host;
+                // client.game.stage = response.stage;
+                // client.game.round = response.round;
+                // client.game.askorder = response.askorder;
+                // client.game.menumber = response.menumber;
                 client.game.joined = true;
                 onJoined();
             }

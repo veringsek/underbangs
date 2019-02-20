@@ -8,6 +8,15 @@ json.parse = function (string, init = {}) {
         return init;
     }
 };
+json.transcribe = function (destination, source, keys) {
+    if (!Array.isArray(keys)) {
+        keys = Object.keys(source);
+    }
+    for (let key of keys) {
+        destination[key] = source[key];
+    }
+    return destination;
+};
 common.json = json;
 
 let http = {};
