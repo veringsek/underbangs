@@ -35,7 +35,7 @@ let GameServer = function (port, host) {
     this.tokens = [];
     this.stage = "wait";
     this.round = -1;
-    this.askorder = "+1";
+    this.askorder = "random";
     this.asktos = [];
 
     let server = express();
@@ -48,34 +48,12 @@ let GameServer = function (port, host) {
         }
         switch (req.query.command) {
             case "next": {
-                switch (this.stage) {
-                    case "wait": {
-                        this.stageStart();
-                        break;
-                    }
-                    case "start": {
-                        this.stageAsk();
-                        break;
-                    }
-                    case "round": {
-                        let round = this.round += 1;
-                        if (this.round >= this.players.length) {
-                            round = 0;
-                        }
-                        this.setRound(round);
-                        break;
-                    }
-                    case "end": {
-                        this.setStage("start");
-                        break;
-                    }
-                }
+                this.nextStage();
                 break;
             }
             case "askorder": {
                 let orders = ["+1", "random"];
-                let o = orders.indexOf(this.askorder);
-                o = common.num.track(o + 1, orders.length);
+                let o = common.num.track(orders.indexOf(this.askorder) + 1, orders.length);
                 this.setAskorder(orders[o]);
                 break;
             }
@@ -84,8 +62,7 @@ let GameServer = function (port, host) {
     });
     server.post("/join", (req, res) => {
         let request = parseRequest(req);
-        let ip = IPv4(req.ip);
-        respond(res, this.serveJoin(request, ip));
+        respond(res, this.serveJoin(request, IPv4(req.ip)));
     });
     server.post("/ask", (req, res) => {
         let request = parseRequest(req);
@@ -116,15 +93,39 @@ GameServer.prototype.setAsktos = function (asktos) {
     this.asktos = asktos;
     this.broadcast({ asktos }, "update", { target: "asktos" });
 };
+GameServer.prototype.nextStage = function () {
+    switch (this.stage) {
+        case "wait": {
+            this.stageStart();
+            break;
+        }
+        case "start": {
+            this.stageAsk();
+            break;
+        }
+        case "round": {
+            let round = this.round += 1;
+            if (this.round >= this.players.length) {
+                round = 0;
+            }
+            this.setRound(round);
+            break;
+        }
+        case "end": {
+            this.setStage("start");
+            break;
+        }
+        default:
+            this.stageWait();
+    }
+};
+GameServer.prototype.stageWait = function () {
+    this.setStage("wait");
+};
 GameServer.prototype.stageStart = function () {
     this.setStage("start");
 };
 GameServer.prototype.stageAsk = function () {
-    // this.asked = [];
-    this.asked = this.players.map(() => false);
-    // for (let player of this.players) {
-    //     this.asked.push(false);
-    // }
     let asktos = [];
     switch (this.askorder) {
         case "+1": {
@@ -135,15 +136,15 @@ GameServer.prototype.stageAsk = function () {
             break;
         }
         case "random": {
+            if (this.players.length < 2) {
+                asktos = [0];
+                break;
+            }
             let someoneAskSelf = () => {
-                let r = false;
-                log(asktos)
                 for (let q in asktos) {
-                    if (parseInt(q) === parseInt(asktos[q])) r = true;// return true;
+                    if (parseInt(q) === parseInt(asktos[q])) return true;
                 }
-                log(r);
-                return r
-                // return false;
+                return false;
             };
             let temp;
             for (let player of this.players) {
@@ -160,6 +161,7 @@ GameServer.prototype.stageAsk = function () {
             break;
         }
     }
+    this.asked = this.players.map(() => false);
     this.setAsktos(asktos);
     this.setStage("ask");
 };
@@ -205,18 +207,7 @@ GameServer.prototype.serveJoin = function (request, ip) {
     let game = common.json.transcribe({ token: this.tokens[menumber], menumber }, this, [
         "url", "host", "stage", "round", "askorder"
     ]);
-    return {
-        result: "joined", game
-        // game: {
-        //     token: this.tokens[menumber],
-        //     url: this.url,
-        //     host: this.host,
-        //     stage: this.stage,
-        //     round: this.round,
-        //     askorder: this.askorder,
-        //     menumber
-        // }
-    };
+    return { result: "joined", game };
 };
 exports.GameServer = GameServer;
 
@@ -329,13 +320,6 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
                 onRejected();
             } else if (response.result === "joined") {
                 common.json.transcribe(client.game, response.game);
-                // client.game.token = response.token;
-                // client.game.url = response.url;
-                // client.game.host = response.host;
-                // client.game.stage = response.stage;
-                // client.game.round = response.round;
-                // client.game.askorder = response.askorder;
-                // client.game.menumber = response.menumber;
                 client.game.joined = true;
                 onJoined();
             }

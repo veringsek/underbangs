@@ -46,6 +46,10 @@ let init = function () {
             ishost: function () {
                 return this.ingame && this.game.host === this.game.menumber;
             },
+            myturn: function () {
+                if (!this.spawned) return false;
+                return this.game.round === this.game.menumber;
+            },
             theaterEmpty: function () {
                 for (let key in this.theater) {
                     if (this.theater[key]) return false;

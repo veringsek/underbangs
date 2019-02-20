@@ -10,7 +10,7 @@
 
 <body onload="init()">
     <div id="ribody" class="flxp-rcs">
-        <div id="divLoadingStage" class="flxp-ccs section">
+        <div id="divLoadingStage" class="flxp-ccs section" :class=" { me: myturn } ">
             <div id="divClientPort" class="flxp-ccs loading-stage"
                 :class="{ focus: loadingStage === 'spawn-client' }">
                 <span class="lbl">Create profile</span>
