@@ -1,6 +1,7 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
     <title>Underbangs</title>
     <link rel="stylesheet" type="text/css" href="flex.css">
     <link rel="stylesheet" type="text/css" href="index.css">
@@ -15,7 +16,6 @@
                 :class="{ focus: loadingStage === 'spawn-client' }">
                 <span class="lbl">Create profile</span>
                 <input type="text" id="txtClientName" class="txt txt-center"
-                    ondblclick="this.value += 'k'//"
                     title="Your nickname" value="Nickname" />
                 <input type="text" id="txtClientPort" class="txt txt-center"
                     ondblclick="this.value = parseInt(this.value) - 1//"
