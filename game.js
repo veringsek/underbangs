@@ -166,7 +166,7 @@ exports.GameServer = GameServer;
  * @param {string} name player's name
  */
 let GameClient = function (port, name = "Noname") {
-    this.me = { url: HTTP.head(DEVICE_IP, port), port, name };
+    this.me = { port, name };
     this.game = {
         url: "",
         host: "",
@@ -276,7 +276,7 @@ GameClient.prototype.controlServerNext = function () {
 GameClient.prototype.updateNote = function (note) {
     let content = { note };
     for (let player of this.game.players) {
-        if (player.url === this.me.url) continue;
+        if (player.number === this.game.menumber) continue;
         HTTP.post(HTTP.url(player.url, "update", {
             target: "note", playernumber: this.game.menumber
         }), content);
