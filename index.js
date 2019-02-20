@@ -28,7 +28,8 @@ let init = function () {
                 web: null
             },
             theaterDialog: {
-                onYes: () => console.log('kkk')
+                onYes: () => null,
+                onNo: () => null
             },
             theaterClear: function () {
                 for (let key in vm.theater) {
@@ -57,7 +58,7 @@ let init = function () {
             meapproved: function () {
                 if (!this.spawned) return false;
                 return this.game.rankings.includes(this.game.menumber);
-            }, 
+            },
             theaterEmpty: function () {
                 for (let key in this.theater) {
                     if (this.theater[key]) return false;
@@ -138,4 +139,29 @@ let isURL = (string) => {
     } catch (ex) {
         return false;
     }
+};
+
+let confirm = (msg, onYes = () => null, onNo = () => null) => {
+    vm.theaterDialog.onYes = onYes;
+    vm.theaterDialog.onNo = onNo;
+    vm.theater.dialog = msg;
+};
+let confirmApprove = () => {
+    confirm("Are you sure to approve his answer?", vm.client.approve);
+};
+let confirmEnd = () => {
+    if (vm.game.rankings.length < vm.game.players.length) {
+        confirm(
+            "It seems some players haven't reached their answer.<br>" + 
+            "Are you sure you want to end this session?",
+            vm.client.controlServerEnd
+        );
+    }
+};
+let confirmRestart = () => {
+    confirm(
+        "The current session will be abandoned after restart.\n<br>" +
+        "Are you sure you want to do this?",
+        vm.client.controlServerRestart
+    );
 };

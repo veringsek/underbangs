@@ -119,9 +119,9 @@
                     <span id="btnGameRoundNext" class="btn flxc"
                         v-on:click="client.controlServerNext()">Next</span>
                     <span id="btnGameRoundEnd" class="btn flxc"
-                        v-on:click="client.controlServerEnd()">End</span>
+                        v-on:click="confirmEnd()">End</span>
                     <span id="btnGameRoundRestart" class="btn flxc"
-                        v-on:click="client.controlServerRestart()">Restart</span>
+                        v-on:click="confirmRestart()">Restart</span>
                 </div>
             </div>
         </div>
@@ -150,8 +150,8 @@
                         <span v-if="game.rankings.includes(player.number)"
                             class="bandaid">Approved</span>
                         <span v-else-if="player.number === game.askto"
-                            class="bandaid" title="Approve his answer"
-                            v-on:click="client.approve()">Approve</span>
+                            class="btn" title="Approve his answer"
+                            onclick="confirmApprove()">Approve</span>
                         <textarea class="flxc txt player__note" 
                             :readonly="player.number !== game.menumber"
                             onchange="vm.client.updateNote(this.value)"
@@ -164,12 +164,16 @@
             </div>
         </div>
         <div v-if="!theaterEmpty" id="divTheater" class="theater flxp-ccc"
-            v-on:click="theaterClear()">
+            onclick="if (event.target === this) vm.theaterClear()">
             <div v-if="theater.dialog" class="theater__dialog flxp-css">
-                <span class="lbl">{{theater.dialog.msg}}</span>
-                <div class="flxp-rsc">
-                    <span class="btn" v-on:click="theaterDialog.onYes()">Yes</span>
-                    <span class="btn" v-on:click="theaterDialog.onNo()">No</span>
+                <span class="lbl flxc" v-html="theater.dialog"></span>
+                <div style="margin-top: 10px; margin-bottom: 10px; text-align: right;">
+                    <span class="btn" 
+                        v-on:click="theaterDialog.onYes(); theaterClear(); "
+                        >Yes</span>
+                    <span class="btn"
+                        v-on:click="theaterDialog.onNo(); theaterClear(); "
+                        >No</span>
                 </div>
             </div>
             <span v-else-if="theater.image" class="theater__img"
