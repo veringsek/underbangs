@@ -139,12 +139,15 @@ let isURL = (string) => {
     }
 };
 let tryport = (port, onSuccess = () => null, onFailed) => {
+    if (typeof port !== "object") {
+        port = { port, stopPort: port };
+    }
     if (!onFailed) {
         onFailed = error => {
             vm.theater.dialog = "This port is unavailable.<br>Try another one.";
         };
     }
-    portfinder.getPort({ port, stopPort: port }, (error, port) => {
+    portfinder.getPort(port, (error, port) => {
         if (error) {
             onFailed(error);
         } else {
