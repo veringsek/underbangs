@@ -87,10 +87,7 @@ let GameServer = function (port, host) {
         if (this.tokens[asker] !== request.token) {
             return respond(res, { error: "no-permission" });
         }
-        log(this.rankings.concat(askto))
-        log(this.rankings)
         this.setRankings(this.rankings.concat(askto));
-        log(this.rankings)
         respond(res, { result: "approved" });
     })
     server.listen(this.port);
@@ -385,13 +382,20 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
         }
     });
 };
-GameClient.prototype.ask = function (question, link, image) {
+GameClient.prototype.ask = function (question, link, image, onFinished) {
     let to = this.game.askto;
     for (let player of this.game.players) {
         if (player.number === to) continue;
         this.sendPlayer(player, "ask", {}, { to, question, link, image });
     }
-    this.sendServer("ask", {}, { number: this.game.menumber });
+    this.sendServer("ask", {}, { number: this.game.menumber }, function () {
+        if (HTTP.ready(this)) {
+            let request = common.json.parse(this.responseText);
+            if (!request.error) {    
+                if (onFinished) onFinished();
+            }
+        }
+    });
 };
 GameClient.prototype.approve = function () {
     let client = this;

@@ -157,7 +157,11 @@ let tryport = (port, onSuccess = () => null, onFailed) => {
 };
 
 let ask = () => {
-    vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value);
+    vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value, () => {
+        if (btnAsk) {
+            btnAsk.style.display = "none";
+        }
+    });
 };
 let tryspawnclient = () => {
     tryport(txtClientPort.value, () => spawnclient(txtClientPort.value, txtClientName.value));
