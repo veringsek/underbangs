@@ -81,6 +81,8 @@ let hostgame = (port = PORT_SERVER) => {
 let joingame = (url) => {
     gameclient.join(url, () => {
         vm.loadingStage = "in-game";
+    }, () => {
+        vm.theater.dialog = "Server rejected.";
     });
 };
 

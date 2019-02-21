@@ -158,9 +158,9 @@ GameServer.prototype.stageStart = function () {
     for (let toplayer of this.players) {
         for (let player of this.players) {
             this.sendPlayer(player, "ask", {}, {
-                to: toplayer.number, 
-                question: "???", 
-                link: "", 
+                to: toplayer.number,
+                question: "???",
+                link: "",
                 image: ""
             });
         }
@@ -232,30 +232,34 @@ GameServer.prototype.stageEnd = function () {
     this.setRankings(this.rankings);
     this.setStage("end");
 };
-GameServer.prototype.addPlayer = function (player) {
-    for (let any of this.players) {
-        if (player.url === any.url) {
-            return -1;// or rejoin?
-        }
-    }
-    this.tokens.push(common.num.random(1000, 9999));
-    player.number = this.players.length;
-    this.players.push(player);
-    this.broadcast({ players: this.players }, "update", { target: "players" });
-    return player.number;
-};
 GameServer.prototype.serveJoin = function (request, ip) {
     let player = request.player;
     player.ip = ip;
     player.url = HTTP.head(player.ip, player.port);
-    let menumber = this.addPlayer(player);
-    if (menumber < 0) {
-        return { result: "rejected" };
+    let newjoin = true;
+    let menumber = -1;
+    for (let any of this.players) {
+        if (player.url === any.url) {
+            newjoin = false;
+            menumber = any.number;
+            // re-join is not ok 'cuz not all data are on server side (like questions)
+        }
     }
+    if (newjoin) {
+        if (this.stage !== "wait") {
+            return { joined: "rejected" };
+        }
+        this.tokens.push(common.num.random(1000, 9999));
+        player.number = this.players.length;
+        this.players.push(player);
+        this.broadcast({ players: this.players }, "update", { target: "players" });
+        menumber = player.number;
+    }
+    let joined = newjoin ? "joined" : "rejoined";
     let game = common.json.transcribe({ token: this.tokens[menumber], menumber }, this, [
         "url", "host", "stage", "round", "askorder"
     ]);
-    return { result: "joined", game };
+    return { joined, game };
 };
 exports.GameServer = GameServer;
 
@@ -372,12 +376,12 @@ GameClient.prototype.join = function (url, onJoined = () => null, onRejected = (
     this.send(HTTP.url(url, "join"), { player: this.me }, function () {
         if (HTTP.ready(this)) {
             let response = common.json.parse(this.responseText, {});
-            if (response.result === "rejected") {
-                onRejected();
-            } else if (response.result === "joined") {
+            if (response.joined === "joined" || response.joined === "rejoined") {
                 common.json.transcribe(client.game, response.game);
                 client.game.joined = true;
                 onJoined();
+            } else if (response.joined === "rejected") {
+                onRejected();
             }
         }
     });
@@ -391,7 +395,7 @@ GameClient.prototype.ask = function (question, link, image, onFinished) {
     this.sendServer("ask", {}, { number: this.game.menumber }, function () {
         if (HTTP.ready(this)) {
             let request = common.json.parse(this.responseText);
-            if (!request.error) {    
+            if (!request.error) {
                 if (onFinished) onFinished();
             }
         }
