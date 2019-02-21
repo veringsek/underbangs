@@ -43,11 +43,11 @@
                         <div class="flxp-rsc">
                             <span class="lbl flxc">Ask order</span>
                             <span class="btn"
-                                v-on:click="client.controlServerAskorder()"
+                                @click="client.controlServerAskorder()"
                                 >{{textAskorder(game.askorder)}}</span>
                         </div>
                     </div>
-                    <div v-if="game.stage === 'ask'" class="flxp-ccs">
+                    <div v-if="game.stage === 'ask'" id="divAsk" class="flxp-ccs">
                         <span class="lbl">You are asking </span>
                         <div>
                             <span class="player__number bandaid"
@@ -69,21 +69,21 @@
                             <span id="imgAskImagePreview" class="player__img"
                                 ondblclick="vm.theater.image = txtAskImage.value"></span>
                         </div>
-                        <span id="btnAsk" class="btn" onclick="ask()">Ask!</span>
+                        <span v-if="Q(game.askto).question === '???'"
+                            id="btnAsk" class="btn" onclick="ask()">Ask!</span>
                     </div>
                     <div v-if="game.stage === 'round' && game.round >= 0"
                         class="flxc flxp-ccc">
-                        <span class="lbl">Now, it's</span>
+                        <span class="lbl">It's turn for</span>
                         <div class="flxp-rcc">
                             <span class="player__number bandaid"
                                 >#{{game.round}}</span>
                             <span class="player__name flxc"
                                 >{{game.players[game.round].name}}</span>
                         </div>
-                        <span class="lbl">'s turn!</span>
                         <span class="player__img"
                             :style=" { 'background-image': `url(${Q(game.round).image})` } "
-                            v-on:click="theater.image = Q(game.round).image"></span>
+                            @click="theater.image = Q(game.round).image"></span>
                         <span class="player__question lbl"
                             :title="Q(game.round).link"
                             onclick="openLink(this.title)"
@@ -112,11 +112,11 @@
                 </div>
                 <div v-if="ishost" id="divHostControls" class="flxp-rcc">
                     <span id="btnGameRoundNext" class="btn flxc"
-                        v-on:click="client.controlServerNext()">Next</span>
+                        @click="client.controlServerNext()">Next</span>
                     <span id="btnGameRoundEnd" class="btn flxc"
-                        v-on:click="confirmEnd()">End</span>
+                        @click="confirmEnd()">End</span>
                     <span id="btnGameRoundRestart" class="btn flxc"
-                        v-on:click="confirmRestart()">Restart</span>
+                        @click="confirmRestart()">Restart</span>
                 </div>
             </div>
         </div>
@@ -127,7 +127,7 @@
                     askto: player.number === game.askto } ">
                     <span class="player__img" onclick="toggleBigImage(this)"
                         :style=" { 'background-image': `url(${Q(player.number).image})` } "
-                        v-on:dblclick="theater.image = Q(player.number).image"></span>
+                        @dblclick="theater.image = Q(player.number).image"></span>
                     <div class="flxc flxp-ccs">
                         <div class="flxp-rsc">
                             <span class="player__number bandaid"
@@ -164,20 +164,20 @@
                 <span class="lbl flxc" v-html="theater.dialog"></span>
                 <div style="margin-top: 10px; margin-bottom: 10px; text-align: right;">
                     <span class="btn" 
-                        v-on:click="theaterDialog.onYes(); theaterClear(); "
+                        @click="theaterDialog.onYes(); theaterClear(); "
                         >Yes</span>
                     <span class="btn"
-                        v-on:click="theaterDialog.onNo(); theaterClear(); "
+                        @click="theaterDialog.onNo(); theaterClear(); "
                         >No</span>
                 </div>
             </div>
             <span v-else-if="theater.image" class="theater__img"
                 :style=" { 'background-image': `url(${theater.image})` } "
-                v-on:click="theater.image = ''"></span>
+                @click="theater.image = ''"></span>
             <div v-else-if="theater.web" class="theater__web flxp-css">
                 <iframe :src="theater.web" class="flxc theater__web__iframe"></iframe>
                 <div class="flxp-rcs">
-                    <span class="btn" v-on:click="openLinkExternal(theater.web)"
+                    <span class="btn" @click="openLinkExternal(theater.web)"
                         >Open in browser</span>
                 </div>
             </div>
