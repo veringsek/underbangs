@@ -20,22 +20,19 @@
                 <input type="text" id="txtClientPort" class="txt txt-center"
                     ondblclick="this.value = parseInt(this.value) - 1//"
                     title="Client's port" value="9487" />
-                <span id="btnSpawn" class="btn flxc" onclick="spawn()">Spawn</span>
+                <span id="btnSpawn" class="btn flxc" onclick="tryspawnclient()">Spawn</span>
             </div>
             <div v-if="spawned" id="divWelcome" class="flxp-ccs loading-stage"
                 :class="{ focus: loadingStage === 'join-game' }">
                 <span class="lbl">Join game at</span>
                 <input type="text" id="txtJoinURL" class="txt txt-center"
                     title="Server's url" value="http://127.0.0.1:9488" />
-                <span id="btnJoin" class="btn flxc" 
-                    onclick="joingame(txtJoinURL.value)">
-                    Join</span>
+                <span id="btnJoin" class="btn flxc"
+                    onclick="joingame(txtJoinURL.value)">Join</span>
                 <span class="lbl">Or host your game</span>
                 <input type="text" id="txtServerPort" class="txt txt-center"
                     title="Server's port" value="9488" />
-                <span id="btnHost" class="btn flxc"
-                    onclick="hostgame(txtServerPort.value)">
-                    Host</span>
+                <span id="btnHost" class="btn flxc" onclick="tryhostgame()">Host</span>
             </div>
             <div v-if="ingame" id="divGameRound" class="flxc flxp-css loading-stage"
                 :class="{ focus: loadingStage === 'in-game' }">

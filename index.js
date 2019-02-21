@@ -140,15 +140,15 @@ let isURL = (string) => {
 };
 let tryport = (port, onSuccess = () => null, onFailed) => {
     if (!onFailed) {
-        onFailed = () => {
+        onFailed = error => {
             vm.theater.dialog = "This port is unavailable.<br>Try another one.";
         };
     }
     portfinder.getPort({ port, stopPort: port }, (error, port) => {
         if (error) {
-            onFailed();
+            onFailed(error);
         } else {
-            onSuccess();
+            onSuccess(port);
         }
     });
 };
@@ -156,8 +156,11 @@ let tryport = (port, onSuccess = () => null, onFailed) => {
 let ask = () => {
     vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value);
 };
-let spawn = () => {
+let tryspawnclient = () => {
     tryport(txtClientPort.value, () => spawnclient(txtClientPort.value, txtClientName.value));
+};
+let tryhostgame = () => {
+    tryport(txtServerPort.value, () => hostgame(txtServerPort.value));
 };
 
 let confirm = (msg, onYes = () => null, onNo = () => null) => {
