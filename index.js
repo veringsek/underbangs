@@ -172,7 +172,7 @@ let confirm = (msg, onYes = () => null, onNo = () => null) => {
     vm.theater.dialog = msg;
 };
 let confirmApprove = () => {
-    confirm("Are you sure to approve his answer?", vm.client.approve);
+    confirm("Are you sure to approve his answer?", () => vm.client.approve());
 };
 let confirmEnd = () => {
     if (vm.game.rankings.length < vm.game.players.length) {
