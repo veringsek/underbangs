@@ -172,7 +172,12 @@ let confirm = (msg, onYes = () => null, onNo = () => null) => {
     vm.theater.dialog = msg;
 };
 let confirmApprove = () => {
-    confirm("Are you sure to approve his answer?", () => vm.client.approve());
+    confirm(`
+        Are you sure to approve 
+        <span class="player__number bandaid">#${vm.game.askto}</span>
+        <span class="player__name">${vm.game.players[vm.game.askto].name}</span>
+        's answer?
+    `, () => vm.client.approve());
 };
 let confirmEnd = () => {
     if (vm.game.rankings.length < vm.game.players.length) {
