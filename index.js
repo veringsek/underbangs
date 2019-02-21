@@ -3,6 +3,7 @@ let log = console.log;
 
 // Node
 const { shell } = require("electron");
+const portfinder = require("portfinder");
 
 // Imports
 const { common } = require("./common.js");
@@ -112,9 +113,6 @@ let textAskorder = (askorder) => {
 let setBGI = (element, url = "") => {
     element.style.backgroundImage = `url('${url}')`;
 };
-let ask = () => {
-    vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value);
-};
 let openLink = (url) => {
     if (isURL(url)) {
         vm.theater.web = url;
@@ -140,6 +138,27 @@ let isURL = (string) => {
         return false;
     }
 };
+let tryport = (port, onSuccess = () => null, onFailed) => {
+    if (!onFailed) {
+        onFailed = () => {
+            vm.theater.dialog = "This port is unavailable.<br>Try another one.";
+        };
+    }
+    portfinder.getPort({ port, stopPort: port }, (error, port) => {
+        if (error) {
+            onFailed();
+        } else {
+            onSuccess();
+        }
+    });
+};
+
+let ask = () => {
+    vm.client.ask(txtAskQuestion.value, txtAskLink.value, txtAskImage.value);
+};
+let spawn = () => {
+    tryport(txtClientPort.value, () => spawnclient(txtClientPort.value, txtClientName.value));
+};
 
 let confirm = (msg, onYes = () => null, onNo = () => null) => {
     vm.theaterDialog.onYes = onYes;
@@ -152,7 +171,7 @@ let confirmApprove = () => {
 let confirmEnd = () => {
     if (vm.game.rankings.length < vm.game.players.length) {
         confirm(
-            "It seems some players haven't reached their answer.<br>" + 
+            "It seems some players haven't reached their answer.<br>" +
             "Are you sure you want to end this session?",
             vm.client.controlServerEnd
         );
