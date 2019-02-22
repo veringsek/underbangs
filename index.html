@@ -110,12 +110,12 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="ishost" id="divHostControls" class="flxp-rcc">
+                <div id="divHostControls" class="flxp-rcc">
                     <span id="btnGameRoundNext" class="btn flxc"
                         @click="client.controlServerNext()">Next</span>
-                    <span id="btnGameRoundEnd" class="btn flxc"
+                    <span id="btnGameRoundEnd" class="btn flxc" v-if="ishost"
                         @click="confirmEnd()">End</span>
-                    <span id="btnGameRoundRestart" class="btn flxc"
+                    <span id="btnGameRoundRestart" class="btn flxc" v-if="ishost"
                         @click="confirmRestart()">Restart</span>
                 </div>
             </div>

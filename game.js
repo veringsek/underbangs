@@ -54,10 +54,6 @@ let GameServer = function (port, host) {
                 this.setAskorder(orders[o]);
                 break;
             }
-            case "next": {
-                this.nextStage();
-                break;
-            }
             case "end": {
                 this.stageEnd();
                 break;
@@ -67,6 +63,13 @@ let GameServer = function (port, host) {
             }
         }
         respond(res);
+    });
+    server.post("/next", (req, res) => {
+        let request = parseRequest(req);
+        let success = this.nextStage(request.token);
+        if (!success) {
+            respond(res, { error: "rejected" });
+        }
     });
     server.post("/join", (req, res) => {
         let request = parseRequest(req);
@@ -124,7 +127,12 @@ GameServer.prototype.setRankings = function (rankings) {
     this.rankings = rankings;
     this.broadcast({ rankings }, "update", { target: "rankings" });
 };
-GameServer.prototype.nextStage = function () {
+GameServer.prototype.nextStage = function (token) {
+    if (this.stage === "round") {
+        if (token !== this.tokens[this.round]) return false;
+    } else {
+        if (token !== this.tokens[this.host]) return false;
+    }
     switch (this.stage) {
         case "wait": {
             this.stageStart();
@@ -147,6 +155,7 @@ GameServer.prototype.nextStage = function () {
             break;
         }
     }
+    return true;
 };
 GameServer.prototype.stageWait = function () {
     this.setStage("wait");
@@ -424,7 +433,7 @@ GameClient.prototype.controlServerAskorder = function () {
 };
 GameClient.prototype.controlServerNext = function () {
     if (!this.game.joined) return false;
-    this.sendServer("control", { command: "next" });
+    this.sendServer("next");
 };
 GameClient.prototype.controlServerEnd = function () {
     if (!this.game.joined) return false;
