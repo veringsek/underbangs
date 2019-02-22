@@ -129,21 +129,20 @@ GameServer.prototype.setRankings = function (rankings) {
     this.broadcast({ rankings }, "update", { target: "rankings" });
 };
 GameServer.prototype.nextStage = function (token) {
-    if (this.stage === "round") {
-        if (token !== this.tokens[this.round]) return false;
-    } else {
-        if (token !== this.tokens[this.host]) return false;
-    }
+    let nothost = token !== this.tokens[this.host];
     switch (this.stage) {
         case "wait": {
+            if (nothost) return false;
             this.stageStart();
             break;
         }
         case "start": {
+            if (nothost) return false;
             this.stageAsk();
             break;
         }
         case "round": {
+            if (nothost && token !== this.tokens[this.round]) return false;
             let round = this.round += 1;
             if (this.round >= this.players.length) {
                 round = 0;
@@ -152,6 +151,7 @@ GameServer.prototype.nextStage = function (token) {
             break;
         }
         case "end": {
+            if (nothost) return false;
             this.stageStart("start");
             break;
         }
