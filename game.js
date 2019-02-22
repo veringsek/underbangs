@@ -60,6 +60,7 @@ let GameServer = function (port, host) {
             }
             case "restart": {
                 this.stageStart();
+                break;
             }
         }
         respond(res);

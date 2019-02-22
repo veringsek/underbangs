@@ -186,14 +186,16 @@ let confirmEnd = () => {
         confirm(
             "It seems some players haven't reached their answer.<br>" +
             "Are you sure you want to end this session?",
-            vm.client.controlServerEnd
+            () => vm.client.controlServerEnd()
         );
+    } else {
+        vm.client.controlServerEnd()
     }
 };
 let confirmRestart = () => {
     confirm(
         "The current session will be abandoned after restart.\n<br>" +
         "Are you sure you want to do this?",
-        vm.client.controlServerRestart
+        () => vm.client.controlServerRestart()
     );
 };

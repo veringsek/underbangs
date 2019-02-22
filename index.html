@@ -12,7 +12,7 @@
 <body onload="init()">
     <div id="ribody" class="flxp-rcs">
         <div id="divLoadingStage" class="flxp-ccs section" :class=" { me: myturn } ">
-            <div id="divClientPort" class="flxp-ccs loading-stage"
+            <div v-if="!spawned" id="divClientPort" class="flxp-ccs loading-stage"
                 :class="{ focus: loadingStage === 'spawn-client' }">
                 <span class="lbl">Create profile</span>
                 <input type="text" id="txtClientName" class="txt txt-center"
@@ -22,7 +22,7 @@
                     title="Client's port" value="9487" />
                 <span id="btnSpawn" class="btn flxc" onclick="tryspawnclient()">Spawn</span>
             </div>
-            <div v-if="spawned" id="divWelcome" class="flxp-ccs loading-stage"
+            <div v-if="spawned && !ingame" id="divWelcome" class="flxp-ccs loading-stage"
                 :class="{ focus: loadingStage === 'join-game' }">
                 <span class="lbl">Join game at</span>
                 <input type="text" id="txtJoinURL" class="txt txt-center"
