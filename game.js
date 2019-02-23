@@ -1,7 +1,21 @@
 // debug
-let log = console.log;
+let log = (message, optionalParams) => {
+    console.log(message, optionalParams);
+    let msg = message;
+    if (typeof msg === "object") {
+        msg = JSON.stringify(msg, "\n", "    ");
+    }
+    let now = new Date();
+    let h = now.getHours().toString().padStart(2, "0");
+    let min = now.getMinutes().toString().padStart(2, "0");
+    let s = now.getSeconds().toString().padStart(2, "0");
+    let ms = now.getMilliseconds().toString().padStart(3, "0");
+    let timing = `${h}:${min}:${s}.${ms}`;
+    fs.appendFileSync(`log.txt`, `[${timing}] ${msg}\n`);
+};
 
 // Node
+const fs = require("fs");
 const IP = require("ip");
 const IPAddress = require("ip-address");
 const DEVICE_IP = IP.address();
@@ -71,6 +85,7 @@ let GameServer = function (port, host) {
         if (!success) {
             respond(res, { error: "rejected" });
         }
+        respond(res);
     });
     server.post("/join", (req, res) => {
         let request = parseRequest(req);
@@ -301,9 +316,17 @@ let GameClient = function (port, name = "Noname") {
     client.post("/update", (req, res) => {
         let request = parseRequest(req, {});
         let target = req.query.target;
+        log('client:update:target')
+        log(target)
+        log('client:update:request')
+        log(request)
         switch (target) {
             case "players": {
                 // temp method
+                log('client:update:players')
+                log(request.players)
+                log('client.game.questions')
+                log(this.game.questions)
                 this.game.questions = [];
                 for (let player of request.players) {
                     this.game.questions.push({
@@ -313,6 +336,8 @@ let GameClient = function (port, name = "Noname") {
                         note: ""
                     });
                 }
+                log('client.game.questions')
+                log(this.game.questions)
                 this.game.players = request.players;
                 break;
             }
@@ -343,6 +368,7 @@ let GameClient = function (port, name = "Noname") {
             }
         }
         respond(res);
+        log('client:update:responded')
     });
     client.post("/ask", (req, res) => {
         let request = parseRequest(req);

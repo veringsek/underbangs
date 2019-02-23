@@ -1,0 +1,36 @@
+[13:43:36.904] client:update:target
+[13:43:36.905] players
+[13:43:36.905] client:update:request
+[13:43:36.907] {
+    "players": [
+        {
+            "port": "9487",
+            "name": "Nickname",
+            "ip": "25.21.142.204",
+            "url": "http://25.21.142.204:9487",
+            "number": 0
+        }
+    ]
+}
+[13:43:36.908] client:update:players
+[13:43:36.909] [
+    {
+        "port": "9487",
+        "name": "Nickname",
+        "ip": "25.21.142.204",
+        "url": "http://25.21.142.204:9487",
+        "number": 0
+    }
+]
+[13:43:36.910] client.game.questions
+[13:43:36.910] []
+[13:43:36.911] client.game.questions
+[13:43:36.912] [
+    {
+        "question": "???",
+        "link": "",
+        "image": "",
+        "note": ""
+    }
+]
+[13:43:36.913] client:update:responded

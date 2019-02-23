@@ -1,5 +1,18 @@
 // debug
-let log = console.log;
+let log = (message, optionalParams) => {
+    console.log(message, optionalParams);
+    let msg = message;
+    if (typeof msg === "object") {
+        msg = JSON.stringify(msg, "\n", "    ");
+    }
+    let now = new Date();
+    let h = now.getHours().toString().padStart(2, "0");
+    let min = now.getMinutes().toString().padStart(2, "0");
+    let s = now.getSeconds().toString().padStart(2, "0");
+    let ms = now.getMilliseconds().toString().padStart(3, "0");
+    let timing = `${h}:${min}:${s}.${ms}`;
+    fs.appendFileSync(`log.txt`, `[${timing}] ${msg}\n`);
+};
 
 // Node
 const { shell } = require("electron");
@@ -15,6 +28,19 @@ const PORT_SERVER = 9488;
 
 // Methods
 let init = function () {
+    // window.addEventListener("error", function (ev) {
+    //     let message = ev.message;
+    //     let filename = ev.filename;
+    //     let lineno = ev.lineno;
+    //     let colno = ev.colno;
+    //     let error = ev.error;
+    //     log(`GLOBAL ERROR @${filename}: ${lineno}, ${colno}`)
+    //     log(message)
+    // });
+    window.onerror = function (message, filename, lineno, colno, error) {
+        log(`GLOBAL ERROR @${filename}: ${lineno}, ${colno}`)
+        log(message)
+    };
     vm = new Vue({
         el: "#ribody",
         data: {
