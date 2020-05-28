@@ -10,7 +10,7 @@
         "portfinder": "^1.0.20"
     },
     "scripts": {
-        "package": "electron-packager . Underbangs --platform=win32 --arch=all --electron-version=2.0.3 --asar=true --ignore=node_modules/electron-*", 
+        "package": "electron-packager . Underbangs --platform=win32 --arch=all --electron-version=2.0.3 --asar=true --ignore=node_modules/electron-*",
         "pkg64": "electron-packager . Underbangs --platform=win32 --arch=x64 --electron-version=2.0.3 --asar=true --ignore=node_modules/electron-*"
     }
 }

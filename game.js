@@ -46,6 +46,7 @@ let GameServer = function (port, host) {
     this.url = HTTP.head(DEVICE_IP, this.port);
     this.host = host;
     this.players = [];
+    this.questions = [];
     this.tokens = [];
     this.stage = "wait";
     this.round = -1;
@@ -316,17 +317,8 @@ let GameClient = function (port, name = "Noname") {
     client.post("/update", (req, res) => {
         let request = parseRequest(req, {});
         let target = req.query.target;
-        log('client:update:target')
-        log(target)
-        log('client:update:request')
-        log(request)
         switch (target) {
             case "players": {
-                // temp method
-                log('client:update:players')
-                log(request.players)
-                log('client.game.questions')
-                log(this.game.questions)
                 this.game.questions = [];
                 for (let player of request.players) {
                     this.game.questions.push({
@@ -336,8 +328,6 @@ let GameClient = function (port, name = "Noname") {
                         note: ""
                     });
                 }
-                log('client.game.questions')
-                log(this.game.questions)
                 this.game.players = request.players;
                 break;
             }
@@ -368,7 +358,6 @@ let GameClient = function (port, name = "Noname") {
             }
         }
         respond(res);
-        log('client:update:responded')
     });
     client.post("/ask", (req, res) => {
         let request = parseRequest(req);
